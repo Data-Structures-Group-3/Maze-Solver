@@ -9,18 +9,31 @@ import java.util.List;
 public class Maze {
 
     /**
-     * Enum for directions to improve readability.
+     * Cardinal directions used for indexing node neighbors.
      */
     public static enum Dir {
         NORTH(0), EAST(1), SOUTH(2), WEST(3);
         private final int idx;
+
+        /**
+         * Creates a direction enum value with a fixed neighbor-array index.
+         *
+         * @param idx index used in a node's neighbor array
+         */
         Dir(int idx) { this.idx = idx; }
+
+        /**
+         * Gets the neighbor-array index associated with this direction.
+         *
+         * @return zero-based index for this direction in Node.neighbors
+         */
         public int idx() { return idx; }
     }
+
     /**
      * Represents a single cell in the maze grid.
-     * Null pointer in neighbors array indicates a wall or boundary.
-     * 
+     * A null value in the neighbors array indicates either a wall
+     * or an out-of-bounds direction.
      */
 
     public static class Node {
@@ -32,7 +45,12 @@ public class Maze {
         // Neighbor references: [N, E, S, W] (null if wall or out of bounds)
         public Node[] neighbors;
     
-        
+        /**
+         * Creates a non-goal node at the given position.
+         *
+         * @param row node row coordinate
+         * @param col node column coordinate
+         */
         public Node(int row, int col) {
             this.row = row;
             this.col = col;
@@ -40,6 +58,13 @@ public class Maze {
             this.neighbors = new Node[4]; // [N, E, S, W]
         }
 
+        /**
+         * Creates a node at the given position with an explicit goal flag.
+         *
+         * @param row node row coordinate
+         * @param col node column coordinate
+         * @param isGoal true if this node is a goal node, false otherwise
+         */
         public Node(int row, int col, boolean isGoal) {
             this.row = row;
             this.col = col;
@@ -47,7 +72,20 @@ public class Maze {
             this.neighbors = new Node[4]; // [N, E, S, W]
         }
 
+        /**
+         * Retrieves the neighboring node in the given direction.
+         *
+         * @param d direction to inspect
+         * @return adjacent node, or null if blocked/out of bounds
+         */
         public Node getNeighbor(Dir d) { return neighbors[d.idx()]; }
+
+        /**
+         * Assigns the neighboring node in the given direction.
+         *
+         * @param d direction to assign
+         * @param n adjacent node to store, or null
+         */
         public void setNeighbor(Dir d, Node n) { neighbors[d.idx()] = n; }
 
     }
@@ -62,8 +100,10 @@ public class Maze {
     private Node goal;
     
     /**
-     * Initialize maze with given dimensions.
-     * All cells start as non-wall paths.
+     * Initializes a maze with fixed dimensions.
+     *
+     * @param length total number of rows in the maze
+     * @param width total number of columns in the maze
      */
     public Maze(int length, int width) {
         this.length = length;
@@ -74,7 +114,7 @@ public class Maze {
     }
     
     /**
-     * Create nodes and establish neighbor links.
+     * Initializes the backing arrays with nodes and marks all cells unoccupied.
      */
     private void initializeGrid() {
         // Create all nodes
@@ -89,8 +129,13 @@ public class Maze {
     
 
     /**
-     * Create a wall between two adjacent nodes.
-     * This removes the neighbor reference in both nodes.
+     * Creates a wall between two adjacent in-bounds cells by removing
+     * neighbor references in both directions.
+     *
+     * @param row1 row of the first cell
+     * @param col1 column of the first cell
+     * @param row2 row of the second cell
+     * @param col2 column of the second cell
      */
     public void createWall(int row1, int col1, int row2, int col2) {
         if (isInBounds(row1, col1) && isInBounds(row2, col2)) {
@@ -124,6 +169,13 @@ public class Maze {
         }
     }
 
+    /**
+     * Marks a cell as occupied and creates a node at that coordinate.
+     *
+     * @param row row index of the cell
+     * @param col column index of the cell
+     * @param direction reserved parameter for future directional creation logic
+     */
     public void createCell(int row, int col, int direction) {
         if (isInBounds(row, col)) {
             occupied[row][col] = true;
@@ -151,6 +203,13 @@ public class Maze {
         }
     }
 
+    /**
+     * Returns the node at a coordinate only if it is both in-bounds and occupied.
+     *
+     * @param row row index to inspect
+     * @param col column index to inspect
+     * @return node at that coordinate, or null if unavailable
+     */
     private Node getNodeIfOccupied(int row, int col) {
         if (!isInBounds(row, col) || !occupied[row][col]) {
             return null;
@@ -165,6 +224,11 @@ public class Maze {
      * line 3: start: row,col
      * line 4: end: row,col
      * line 5+: layout rows of 1s and 0s
+    *
+    * @param filePath path to the maze text file
+    * @return newly created Maze instance populated from file data
+    * @throws IOException if file reading fails
+    * @throws IllegalArgumentException if file contents are invalid
      */
     public static Maze importFromFile(String filePath) throws IOException {
         Path path = Paths.get(filePath);
@@ -226,6 +290,10 @@ public class Maze {
 
     /**
      * Export the current maze to text format for import/export.
+        *
+        * @param filePath destination file path
+        * @throws IOException if writing fails
+        * @throws IllegalStateException if start or end is not set
      */
     public void exportToFile(String filePath) throws IOException {
         if (start == null) {
@@ -252,6 +320,14 @@ public class Maze {
     }
 
 
+    /**
+     * Parses a coordinate line with the format label: row,col.
+     *
+     * @param line full line text to parse
+     * @param label expected label prefix (for example start or end)
+     * @return two-element array containing row at index 0 and col at index 1
+     * @throws IllegalArgumentException if the line is missing or malformed
+     */
     private static int[] parseCoordinateLine(String line, String label) {
         if (line == null) {
             throw new IllegalArgumentException("Missing line for " + label + " coordinates.");
@@ -276,7 +352,10 @@ public class Maze {
 
 
     /**
-     * Set the start position.
+     * Sets the start node if the given coordinate is occupied.
+     *
+     * @param row start row coordinate
+     * @param col start column coordinate
      */
     public void setStart(int row, int col) {
         if (isOccupied(row, col)) {
@@ -285,7 +364,10 @@ public class Maze {
     }
     
     /**
-     * Set the goal position.
+     * Sets the goal node and updates the goal flag on nodes accordingly.
+     *
+     * @param row goal row coordinate
+     * @param col goal column coordinate
      */
     public void setGoal(int row, int col) {
         if (this.goal != null) {
@@ -301,21 +383,29 @@ public class Maze {
     }
     
     /**
-     * Get the starting node.
+     * Returns the current start node.
+     *
+     * @return start node, or null if not set
      */
     public Node getStart() {
         return this.start;
     }
     
     /**
-     * Get the goal node.
+     * Returns the current goal node.
+     *
+     * @return goal node, or null if not set
      */
     public Node getGoal() {
         return this.goal;
     }
     
     /**
-     * Get a specific node by coordinates.
+     * Returns the node at a coordinate if that cell is occupied.
+     *
+     * @param row row coordinate to query
+     * @param col column coordinate to query
+     * @return node at the coordinate, or null if not occupied
      */
     public Node getNode(int row, int col) {
         if (isOccupied(row, col)) {
@@ -325,12 +415,23 @@ public class Maze {
     }
     
     /**
-     * Check if coordinates are within maze bounds.
+     * Checks whether coordinates are inside maze boundaries.
+     *
+     * @param row row coordinate to test
+     * @param col column coordinate to test
+     * @return true if in range, otherwise false
      */
     public boolean isInBounds(int row, int col) {
         return row >= 0 && row < length && col >= 0 && col < width;
     }
 
+    /**
+     * Checks whether a cell is a traversable/occupied cell.
+     *
+     * @param row row coordinate to test
+     * @param col column coordinate to test
+     * @return true if in bounds and occupied, otherwise false
+     */
     public boolean isOccupied(int row, int col) {
         if (isInBounds(row, col)) {
             return occupied[row][col];
@@ -338,10 +439,20 @@ public class Maze {
         return false;
     }
     
+    /**
+     * Gets the maze row count.
+     *
+     * @return total number of rows
+     */
     public int getLength() {
         return length;
     }
     
+    /**
+     * Gets the maze column count.
+     *
+     * @return total number of columns
+     */
     public int getWidth() {
         return width;
     }
@@ -365,20 +476,42 @@ public class Maze {
         private final int issueCount;
         private final List<String> issues;
 
+        /**
+         * Creates an immutable validation result object.
+         *
+         * @param valid true if no issues were found
+         * @param issueCount total number of issues detected
+         * @param issues captured issue messages (possibly truncated)
+         */
         private NeighborValidationResult(boolean valid, int issueCount, List<String> issues) {
             this.valid = valid;
             this.issueCount = issueCount;
             this.issues = issues;
         }
 
+        /**
+         * Indicates whether neighbor validation succeeded.
+         *
+         * @return true when zero issues were found
+         */
         public boolean isValid() {
             return valid;
         }
 
+        /**
+         * Gets the total number of detected issues.
+         *
+         * @return issue count
+         */
         public int getIssueCount() {
             return issueCount;
         }
 
+        /**
+        * Gets the collected issue messages.
+        *
+        * @return immutable list of issue descriptions
+        */
         public List<String> getIssues() {
             return issues;
         }
@@ -388,6 +521,7 @@ public class Maze {
      * Validate all node-to-neighbor links against occupied adjacency.
      *
      * @param maxIssuesToCollect maximum number of issue messages to store.
+    * @return validation result containing status, issue count, and messages
      */
     public NeighborValidationResult validateNeighborConnections(int maxIssuesToCollect) {
         int issues = 0;
@@ -457,6 +591,8 @@ public class Maze {
 
     /**
      * Build a compact, line-by-line neighbor table for occupied cells.
+        *
+        * @return list of formatted lines describing neighbors for debugging
      */
     public List<String> buildNeighborTableLines() {
         List<String> lines = new ArrayList<>();
@@ -485,12 +621,25 @@ public class Maze {
         return lines;
     }
 
+    /**
+     * Adds an issue message to the collection while respecting a hard cap.
+     *
+     * @param issues destination list of issue messages
+     * @param maxIssuesToCollect maximum number of messages to store
+     * @param message issue message text
+     */
     private static void addIssue(List<String> issues, int maxIssuesToCollect, String message) {
         if (issues.size() < maxIssuesToCollect) {
             issues.add(message);
         }
     }
 
+    /**
+     * Returns row delta for a movement direction.
+     *
+     * @param dir direction to convert
+     * @return -1, 0, or 1 depending on vertical movement
+     */
     private static int rowDelta(Dir dir) {
         switch (dir) {
             case NORTH:
@@ -502,6 +651,12 @@ public class Maze {
         }
     }
 
+    /**
+     * Returns column delta for a movement direction.
+     *
+     * @param dir direction to convert
+     * @return -1, 0, or 1 depending on horizontal movement
+     */
     private static int colDelta(Dir dir) {
         switch (dir) {
             case EAST:
@@ -513,6 +668,12 @@ public class Maze {
         }
     }
 
+    /**
+     * Returns the opposite of a given direction.
+     *
+     * @param dir input direction
+     * @return opposite direction
+     */
     private static Dir opposite(Dir dir) {
         switch (dir) {
             case NORTH:
@@ -528,6 +689,12 @@ public class Maze {
         }
     }
 
+    /**
+     * Formats a node as coordinate text for debug output.
+     *
+     * @param node node to format
+     * @return coordinate string or null text
+     */
     private static String formatNode(Node node) {
         if (node == null) {
             return "null";
