@@ -1,0 +1,309 @@
+\doxysection{Maze Class Reference}
+\hypertarget{class_maze}{}\label{class_maze}\index{Maze@{Maze}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bfseries Dir}
+\item 
+class {\bfseries Neighbor\+Validation\+Result}
+\item 
+class {\bfseries Node}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_maze_a64794a0b1cbed9d04736002da7ee62cb}{Maze}} (int length, int width)
+\item 
+void \mbox{\hyperlink{class_maze_a6486e0e9824c0831dc223958176e7661}{create\+Wall}} (int row1, int col1, int row2, int col2)
+\item 
+void \mbox{\hyperlink{class_maze_ad96d7e5ccf65fe29e318bd0c39b39a6a}{create\+Cell}} (int row, int col, int direction)
+\item 
+void \mbox{\hyperlink{class_maze_ae20cb68cb5dc52cf20d04c669d0cde3e}{export\+To\+File}} (String file\+Path)  throws IOException 
+\item 
+void \mbox{\hyperlink{class_maze_ab06ebd4ce10a357460c2862fdfead186}{set\+Start}} (int row, int col)
+\item 
+void \mbox{\hyperlink{class_maze_aad70719e52756a45e3c00a9c1ff30fbd}{set\+Goal}} (int row, int col)
+\item 
+Node \mbox{\hyperlink{class_maze_a334073acb91f71281682945b37e82b60}{get\+Start}} ()
+\item 
+Node \mbox{\hyperlink{class_maze_a4abf627d4654079a2ab0e03b32df5173}{get\+Goal}} ()
+\item 
+Node \mbox{\hyperlink{class_maze_a9a7416a313203bf219987db2c0e25814}{get\+Node}} (int row, int col)
+\item 
+boolean \mbox{\hyperlink{class_maze_a5d449c5ff98fe08c078209ea45bd9824}{is\+In\+Bounds}} (int row, int col)
+\item 
+boolean \mbox{\hyperlink{class_maze_a7dc187bb000382efc20df7ff80b525be}{is\+Occupied}} (int row, int col)
+\item 
+int \mbox{\hyperlink{class_maze_a7bf4e7fb124ff2a0773f73b82af0ad73}{get\+Length}} ()
+\item 
+int \mbox{\hyperlink{class_maze_a5524b06dd2648f2f5fa5daf458ba9a9b}{get\+Width}} ()
+\item 
+Neighbor\+Validation\+Result \mbox{\hyperlink{class_maze_a164060b8ad4c0e102daa8aa2d23aeaa8}{validate\+Neighbor\+Connections}} (int max\+Issues\+To\+Collect)
+\item 
+List$<$ String $>$ \mbox{\hyperlink{class_maze_a87ee5eb9a8eac29ec2d4595877d9a0da}{build\+Neighbor\+Table\+Lines}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_maze}{Maze}} \mbox{\hyperlink{class_maze_a262a0c154562ed47724604c0cc46bcab}{import\+From\+File}} (String file\+Path)  throws IOException 
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_maze_a64794a0b1cbed9d04736002da7ee62cb}\index{Maze@{Maze}!Maze@{Maze}}
+\index{Maze@{Maze}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{Maze()}{Maze()}}
+{\footnotesize\ttfamily \label{class_maze_a64794a0b1cbed9d04736002da7ee62cb} 
+Maze.\+Maze (\begin{DoxyParamCaption}\item[{int}]{length}{, }\item[{int}]{width}{}\end{DoxyParamCaption})}
+
+Initializes a maze with fixed dimensions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em length} & total number of rows in the maze \\
+\hline
+{\em width} & total number of columns in the maze \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_maze_a87ee5eb9a8eac29ec2d4595877d9a0da}\index{Maze@{Maze}!buildNeighborTableLines@{buildNeighborTableLines}}
+\index{buildNeighborTableLines@{buildNeighborTableLines}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{buildNeighborTableLines()}{buildNeighborTableLines()}}
+{\footnotesize\ttfamily \label{class_maze_a87ee5eb9a8eac29ec2d4595877d9a0da} 
+List$<$ String $>$ Maze.\+build\+Neighbor\+Table\+Lines (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Build a compact, line-\/by-\/line neighbor table for occupied cells.
+
+\begin{DoxyReturn}{Returns}
+list of formatted lines describing neighbors for debugging 
+\end{DoxyReturn}
+\Hypertarget{class_maze_ad96d7e5ccf65fe29e318bd0c39b39a6a}\index{Maze@{Maze}!createCell@{createCell}}
+\index{createCell@{createCell}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{createCell()}{createCell()}}
+{\footnotesize\ttfamily \label{class_maze_ad96d7e5ccf65fe29e318bd0c39b39a6a} 
+void Maze.\+create\+Cell (\begin{DoxyParamCaption}\item[{int}]{row}{, }\item[{int}]{col}{, }\item[{int}]{direction}{}\end{DoxyParamCaption})}
+
+Marks a cell as occupied and creates a node at that coordinate.
+
+
+\begin{DoxyParams}{Parameters}
+{\em row} & row index of the cell \\
+\hline
+{\em col} & column index of the cell \\
+\hline
+{\em direction} & reserved parameter for future directional creation logic \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_maze_a6486e0e9824c0831dc223958176e7661}\index{Maze@{Maze}!createWall@{createWall}}
+\index{createWall@{createWall}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{createWall()}{createWall()}}
+{\footnotesize\ttfamily \label{class_maze_a6486e0e9824c0831dc223958176e7661} 
+void Maze.\+create\+Wall (\begin{DoxyParamCaption}\item[{int}]{row1}{, }\item[{int}]{col1}{, }\item[{int}]{row2}{, }\item[{int}]{col2}{}\end{DoxyParamCaption})}
+
+Creates a wall between two adjacent in-\/bounds cells by removing neighbor references in both directions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em row1} & row of the first cell \\
+\hline
+{\em col1} & column of the first cell \\
+\hline
+{\em row2} & row of the second cell \\
+\hline
+{\em col2} & column of the second cell \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_maze_ae20cb68cb5dc52cf20d04c669d0cde3e}\index{Maze@{Maze}!exportToFile@{exportToFile}}
+\index{exportToFile@{exportToFile}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{exportToFile()}{exportToFile()}}
+{\footnotesize\ttfamily \label{class_maze_ae20cb68cb5dc52cf20d04c669d0cde3e} 
+void Maze.\+export\+To\+File (\begin{DoxyParamCaption}\item[{String}]{file\+Path}{}\end{DoxyParamCaption}) throws IOException}
+
+Export the current maze to text format for import/export.
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+Path} & destination file path \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em IOException} & if writing fails \\
+\hline
+{\em Illegal\+State\+Exception} & if start or end is not set \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{class_maze_a4abf627d4654079a2ab0e03b32df5173}\index{Maze@{Maze}!getGoal@{getGoal}}
+\index{getGoal@{getGoal}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{getGoal()}{getGoal()}}
+{\footnotesize\ttfamily \label{class_maze_a4abf627d4654079a2ab0e03b32df5173} 
+Node Maze.\+get\+Goal (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Returns the current goal node.
+
+\begin{DoxyReturn}{Returns}
+goal node, or null if not set 
+\end{DoxyReturn}
+\Hypertarget{class_maze_a7bf4e7fb124ff2a0773f73b82af0ad73}\index{Maze@{Maze}!getLength@{getLength}}
+\index{getLength@{getLength}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{getLength()}{getLength()}}
+{\footnotesize\ttfamily \label{class_maze_a7bf4e7fb124ff2a0773f73b82af0ad73} 
+int Maze.\+get\+Length (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Gets the maze row count.
+
+\begin{DoxyReturn}{Returns}
+total number of rows 
+\end{DoxyReturn}
+\Hypertarget{class_maze_a9a7416a313203bf219987db2c0e25814}\index{Maze@{Maze}!getNode@{getNode}}
+\index{getNode@{getNode}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{getNode()}{getNode()}}
+{\footnotesize\ttfamily \label{class_maze_a9a7416a313203bf219987db2c0e25814} 
+Node Maze.\+get\+Node (\begin{DoxyParamCaption}\item[{int}]{row}{, }\item[{int}]{col}{}\end{DoxyParamCaption})}
+
+Returns the node at a coordinate if that cell is occupied.
+
+
+\begin{DoxyParams}{Parameters}
+{\em row} & row coordinate to query \\
+\hline
+{\em col} & column coordinate to query \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+node at the coordinate, or null if not occupied 
+\end{DoxyReturn}
+\Hypertarget{class_maze_a334073acb91f71281682945b37e82b60}\index{Maze@{Maze}!getStart@{getStart}}
+\index{getStart@{getStart}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{getStart()}{getStart()}}
+{\footnotesize\ttfamily \label{class_maze_a334073acb91f71281682945b37e82b60} 
+Node Maze.\+get\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Returns the current start node.
+
+\begin{DoxyReturn}{Returns}
+start node, or null if not set 
+\end{DoxyReturn}
+\Hypertarget{class_maze_a5524b06dd2648f2f5fa5daf458ba9a9b}\index{Maze@{Maze}!getWidth@{getWidth}}
+\index{getWidth@{getWidth}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{getWidth()}{getWidth()}}
+{\footnotesize\ttfamily \label{class_maze_a5524b06dd2648f2f5fa5daf458ba9a9b} 
+int Maze.\+get\+Width (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Gets the maze column count.
+
+\begin{DoxyReturn}{Returns}
+total number of columns 
+\end{DoxyReturn}
+\Hypertarget{class_maze_a262a0c154562ed47724604c0cc46bcab}\index{Maze@{Maze}!importFromFile@{importFromFile}}
+\index{importFromFile@{importFromFile}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{importFromFile()}{importFromFile()}}
+{\footnotesize\ttfamily \label{class_maze_a262a0c154562ed47724604c0cc46bcab} 
+static \mbox{\hyperlink{class_maze}{Maze}} Maze.\+import\+From\+File (\begin{DoxyParamCaption}\item[{String}]{file\+Path}{}\end{DoxyParamCaption}) throws IOException\hspace{0.3cm}{\ttfamily [static]}}
+
+Import a maze from text using this format\+: line 1\+: row count line 2\+: column count line 3\+: start\+: row,col line 4\+: end\+: row,col line 5+\+: layout rows of 1s and 0s
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+Path} & path to the maze text file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+newly created \doxylink{class_maze}{Maze} instance populated from file data 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em IOException} & if file reading fails \\
+\hline
+{\em Illegal\+Argument\+Exception} & if file contents are invalid \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{class_maze_a5d449c5ff98fe08c078209ea45bd9824}\index{Maze@{Maze}!isInBounds@{isInBounds}}
+\index{isInBounds@{isInBounds}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{isInBounds()}{isInBounds()}}
+{\footnotesize\ttfamily \label{class_maze_a5d449c5ff98fe08c078209ea45bd9824} 
+boolean Maze.\+is\+In\+Bounds (\begin{DoxyParamCaption}\item[{int}]{row}{, }\item[{int}]{col}{}\end{DoxyParamCaption})}
+
+Checks whether coordinates are inside maze boundaries.
+
+
+\begin{DoxyParams}{Parameters}
+{\em row} & row coordinate to test \\
+\hline
+{\em col} & column coordinate to test \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if in range, otherwise false 
+\end{DoxyReturn}
+\Hypertarget{class_maze_a7dc187bb000382efc20df7ff80b525be}\index{Maze@{Maze}!isOccupied@{isOccupied}}
+\index{isOccupied@{isOccupied}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{isOccupied()}{isOccupied()}}
+{\footnotesize\ttfamily \label{class_maze_a7dc187bb000382efc20df7ff80b525be} 
+boolean Maze.\+is\+Occupied (\begin{DoxyParamCaption}\item[{int}]{row}{, }\item[{int}]{col}{}\end{DoxyParamCaption})}
+
+Checks whether a cell is a traversable/occupied cell.
+
+
+\begin{DoxyParams}{Parameters}
+{\em row} & row coordinate to test \\
+\hline
+{\em col} & column coordinate to test \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if in bounds and occupied, otherwise false 
+\end{DoxyReturn}
+\Hypertarget{class_maze_aad70719e52756a45e3c00a9c1ff30fbd}\index{Maze@{Maze}!setGoal@{setGoal}}
+\index{setGoal@{setGoal}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{setGoal()}{setGoal()}}
+{\footnotesize\ttfamily \label{class_maze_aad70719e52756a45e3c00a9c1ff30fbd} 
+void Maze.\+set\+Goal (\begin{DoxyParamCaption}\item[{int}]{row}{, }\item[{int}]{col}{}\end{DoxyParamCaption})}
+
+Sets the goal node and updates the goal flag on nodes accordingly.
+
+
+\begin{DoxyParams}{Parameters}
+{\em row} & goal row coordinate \\
+\hline
+{\em col} & goal column coordinate \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_maze_ab06ebd4ce10a357460c2862fdfead186}\index{Maze@{Maze}!setStart@{setStart}}
+\index{setStart@{setStart}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{setStart()}{setStart()}}
+{\footnotesize\ttfamily \label{class_maze_ab06ebd4ce10a357460c2862fdfead186} 
+void Maze.\+set\+Start (\begin{DoxyParamCaption}\item[{int}]{row}{, }\item[{int}]{col}{}\end{DoxyParamCaption})}
+
+Sets the start node if the given coordinate is occupied.
+
+
+\begin{DoxyParams}{Parameters}
+{\em row} & start row coordinate \\
+\hline
+{\em col} & start column coordinate \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_maze_a164060b8ad4c0e102daa8aa2d23aeaa8}\index{Maze@{Maze}!validateNeighborConnections@{validateNeighborConnections}}
+\index{validateNeighborConnections@{validateNeighborConnections}!Maze@{Maze}}
+\doxysubsubsection{\texorpdfstring{validateNeighborConnections()}{validateNeighborConnections()}}
+{\footnotesize\ttfamily \label{class_maze_a164060b8ad4c0e102daa8aa2d23aeaa8} 
+Neighbor\+Validation\+Result Maze.\+validate\+Neighbor\+Connections (\begin{DoxyParamCaption}\item[{int}]{max\+Issues\+To\+Collect}{}\end{DoxyParamCaption})}
+
+Validate all node-\/to-\/neighbor links against occupied adjacency.
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Issues\+To\+Collect} & maximum number of issue messages to store. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+validation result containing status, issue count, and messages 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/Maze.\+java\end{DoxyCompactItemize}
