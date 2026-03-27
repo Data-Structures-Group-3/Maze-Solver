@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Maze {
@@ -249,6 +251,7 @@ public class Maze {
         Files.writeString(Paths.get(filePath), output.toString());
     }
 
+
     private static int[] parseCoordinateLine(String line, String label) {
         if (line == null) {
             throw new IllegalArgumentException("Missing line for " + label + " coordinates.");
@@ -285,9 +288,15 @@ public class Maze {
      * Set the goal position.
      */
     public void setGoal(int row, int col) {
+        if (this.goal != null) {
+            this.goal.isGoal = false;
+        }
+
         if (isOccupied(row, col)) {
             this.goal = grid[row][col];
             this.goal.isGoal = true;
+        } else {
+            this.goal = null;
         }
     }
     
@@ -336,4 +345,194 @@ public class Maze {
     public int getWidth() {
         return width;
     }
+
+
+
+    /**
+     * 
+     * Validation and debugging utilities:
+     * 
+     */
+
+
+    
+
+    /**
+     * Validation result for neighbor consistency checks.
+     */
+    public static class NeighborValidationResult {
+        private final boolean valid;
+        private final int issueCount;
+        private final List<String> issues;
+
+        private NeighborValidationResult(boolean valid, int issueCount, List<String> issues) {
+            this.valid = valid;
+            this.issueCount = issueCount;
+            this.issues = issues;
+        }
+
+        public boolean isValid() {
+            return valid;
+        }
+
+        public int getIssueCount() {
+            return issueCount;
+        }
+
+        public List<String> getIssues() {
+            return issues;
+        }
+    }
+
+    /**
+     * Validate all node-to-neighbor links against occupied adjacency.
+     *
+     * @param maxIssuesToCollect maximum number of issue messages to store.
+     */
+    public NeighborValidationResult validateNeighborConnections(int maxIssuesToCollect) {
+        int issues = 0;
+        int limit = Math.max(0, maxIssuesToCollect);
+        List<String> issueMessages = new ArrayList<>();
+
+        for (int row = 0; row < length; row++) {
+            for (int col = 0; col < width; col++) {
+                if (!isOccupied(row, col)) {
+                    continue;
+                }
+
+                Node node = getNode(row, col);
+                if (node == null) {
+                    issues++;
+                    addIssue(issueMessages, limit,
+                        "Neighbor mismatch: occupied cell has null node at (" + row + "," + col + ")");
+                    continue;
+                }
+
+                for (Dir dir : Dir.values()) {
+                    int nRow = row + rowDelta(dir);
+                    int nCol = col + colDelta(dir);
+                    boolean expectedConnected = isInBounds(nRow, nCol) && isOccupied(nRow, nCol);
+
+                    Node actualNeighbor = node.getNeighbor(dir);
+
+                    if (!expectedConnected) {
+                        if (actualNeighbor != null) {
+                            issues++;
+                            addIssue(issueMessages, limit,
+                                "Neighbor mismatch: expected null " + dir + " neighbor at (" + row + "," + col + ") but got ("
+                                    + actualNeighbor.row + "," + actualNeighbor.col + ")");
+                        }
+                        continue;
+                    }
+
+                    Node expectedNeighbor = getNode(nRow, nCol);
+                    if (actualNeighbor == null) {
+                        issues++;
+                        addIssue(issueMessages, limit,
+                            "Neighbor mismatch: missing " + dir + " neighbor at (" + row + "," + col + "), expected ("
+                                + nRow + "," + nCol + ")");
+                        continue;
+                    }
+
+                    if (actualNeighbor != expectedNeighbor) {
+                        issues++;
+                        addIssue(issueMessages, limit,
+                            "Neighbor mismatch: wrong " + dir + " neighbor at (" + row + "," + col + "), expected ("
+                                + nRow + "," + nCol + ") but got (" + actualNeighbor.row + "," + actualNeighbor.col + ")");
+                    }
+
+                    Node reciprocal = actualNeighbor.getNeighbor(opposite(dir));
+                    if (reciprocal != node) {
+                        issues++;
+                        addIssue(issueMessages, limit,
+                            "Neighbor mismatch: reciprocal link broken between (" + row + "," + col + ") and ("
+                                + actualNeighbor.row + "," + actualNeighbor.col + ") for " + dir);
+                    }
+                }
+            }
+        }
+
+        return new NeighborValidationResult(issues == 0, issues, Collections.unmodifiableList(issueMessages));
+    }
+
+    /**
+     * Build a compact, line-by-line neighbor table for occupied cells.
+     */
+    public List<String> buildNeighborTableLines() {
+        List<String> lines = new ArrayList<>();
+        lines.add("Neighbor table (occupied cells only):");
+
+        for (int row = 0; row < length; row++) {
+            for (int col = 0; col < width; col++) {
+                if (!isOccupied(row, col)) {
+                    continue;
+                }
+
+                Node node = getNode(row, col);
+                if (node == null) {
+                    lines.add("(" + row + "," + col + ") N=null E=null S=null W=null");
+                    continue;
+                }
+
+                String north = formatNode(node.getNeighbor(Dir.NORTH));
+                String east = formatNode(node.getNeighbor(Dir.EAST));
+                String south = formatNode(node.getNeighbor(Dir.SOUTH));
+                String west = formatNode(node.getNeighbor(Dir.WEST));
+                lines.add("(" + row + "," + col + ") N=" + north + " E=" + east + " S=" + south + " W=" + west);
+            }
+        }
+
+        return lines;
+    }
+
+    private static void addIssue(List<String> issues, int maxIssuesToCollect, String message) {
+        if (issues.size() < maxIssuesToCollect) {
+            issues.add(message);
+        }
+    }
+
+    private static int rowDelta(Dir dir) {
+        switch (dir) {
+            case NORTH:
+                return -1;
+            case SOUTH:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+
+    private static int colDelta(Dir dir) {
+        switch (dir) {
+            case EAST:
+                return 1;
+            case WEST:
+                return -1;
+            default:
+                return 0;
+        }
+    }
+
+    private static Dir opposite(Dir dir) {
+        switch (dir) {
+            case NORTH:
+                return Dir.SOUTH;
+            case EAST:
+                return Dir.WEST;
+            case SOUTH:
+                return Dir.NORTH;
+            case WEST:
+                return Dir.EAST;
+            default:
+                throw new IllegalArgumentException("Unknown direction: " + dir);
+        }
+    }
+
+    private static String formatNode(Node node) {
+        if (node == null) {
+            return "null";
+        }
+        return "(" + node.row + "," + node.col + ")";
+    }
+
 }
