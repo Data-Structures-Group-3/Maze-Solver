@@ -1,9 +1,15 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
 public class Maze {
 
     /**
      * Enum for directions to improve readability.
      */
-    public static final enum Dir {
+    public static enum Dir {
         NORTH(0), EAST(1), SOUTH(2), WEST(3);
         private final int idx;
         Dir(int idx) { this.idx = idx; }
@@ -122,6 +128,148 @@ public class Maze {
             grid[row][col] = new Node(row, col);
         }
     }   
+
+    /**
+     * Rebuild all neighbor links using the occupied layout.
+     * Occupied adjacent cells are connected; walls and boundaries are null.
+     */
+    private void rebuildNeighborsFromOccupied() {
+        for (int row = 0; row < length; row++) {
+            for (int col = 0; col < width; col++) {
+                if (!occupied[row][col] || grid[row][col] == null) {
+                    continue;
+                }
+
+                Node node = grid[row][col];
+                node.setNeighbor(Dir.NORTH, getNodeIfOccupied(row - 1, col));
+                node.setNeighbor(Dir.EAST, getNodeIfOccupied(row, col + 1));
+                node.setNeighbor(Dir.SOUTH, getNodeIfOccupied(row + 1, col));
+                node.setNeighbor(Dir.WEST, getNodeIfOccupied(row, col - 1));
+            }
+        }
+    }
+
+    private Node getNodeIfOccupied(int row, int col) {
+        if (!isInBounds(row, col) || !occupied[row][col]) {
+            return null;
+        }
+        return grid[row][col];
+    }
+
+    /**
+     * Import a maze from text using this format:
+     * line 1: row count
+     * line 2: column count
+     * line 3: start: row,col
+     * line 4: end: row,col
+     * line 5+: layout rows of 1s and 0s
+     */
+    public static Maze importFromFile(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        List<String> lines = Files.readAllLines(path);
+
+        if (lines.size() < 4) {
+            throw new IllegalArgumentException("Maze file must contain at least 4 header lines.");
+        }
+
+        int length = Integer.parseInt(lines.get(0).trim());
+        int width = Integer.parseInt(lines.get(1).trim());
+
+        if (length <= 0 || width <= 0) {
+            throw new IllegalArgumentException("Maze dimensions must be positive.");
+        }
+
+        if (lines.size() < 4 + length) {
+            throw new IllegalArgumentException("Maze file does not contain the expected number of layout rows.");
+        }
+
+        int[] startPos = parseCoordinateLine(lines.get(2), "start");
+        int[] endPos = parseCoordinateLine(lines.get(3), "end");
+
+        Maze maze = new Maze(length, width);
+
+        for (int row = 0; row < length; row++) {
+            String layoutRow = lines.get(4 + row).trim();
+            if (layoutRow.length() != width) {
+                throw new IllegalArgumentException("Layout row " + row + " has width " + layoutRow.length() + " but expected " + width + ".");
+            }
+
+            for (int col = 0; col < width; col++) {
+                char cell = layoutRow.charAt(col);
+                if (cell == '1') {
+                    maze.occupied[row][col] = true;
+                    maze.grid[row][col] = new Node(row, col);
+                } else if (cell == '0') {
+                    maze.occupied[row][col] = false;
+                    maze.grid[row][col] = null;
+                } else {
+                    throw new IllegalArgumentException("Invalid cell character '" + cell + "' at row " + row + ", col " + col + ". Use only 0 or 1.");
+                }
+            }
+        }
+
+        maze.rebuildNeighborsFromOccupied();
+
+        if (!maze.isInBounds(startPos[0], startPos[1]) || !maze.isOccupied(startPos[0], startPos[1])) {
+            throw new IllegalArgumentException("Start position must be in bounds and on a path cell (1).");
+        }
+        if (!maze.isInBounds(endPos[0], endPos[1]) || !maze.isOccupied(endPos[0], endPos[1])) {
+            throw new IllegalArgumentException("End position must be in bounds and on a path cell (1).");
+        }
+
+        maze.setStart(startPos[0], startPos[1]);
+        maze.setGoal(endPos[0], endPos[1]);
+        return maze;
+    }
+
+    /**
+     * Export the current maze to text format for import/export.
+     */
+    public void exportToFile(String filePath) throws IOException {
+        if (start == null) {
+            throw new IllegalStateException("Start position is not set.");
+        }
+        if (goal == null) {
+            throw new IllegalStateException("End position is not set.");
+        }
+
+        StringBuilder output = new StringBuilder();
+        output.append(length).append(System.lineSeparator());
+        output.append(width).append(System.lineSeparator());
+        output.append("start: ").append(start.row).append(",").append(start.col).append(System.lineSeparator());
+        output.append("end: ").append(goal.row).append(",").append(goal.col).append(System.lineSeparator());
+
+        for (int row = 0; row < length; row++) {
+            for (int col = 0; col < width; col++) {
+                output.append(occupied[row][col] ? '1' : '0');
+            }
+            output.append(System.lineSeparator());
+        }
+
+        Files.writeString(Paths.get(filePath), output.toString());
+    }
+
+    private static int[] parseCoordinateLine(String line, String label) {
+        if (line == null) {
+            throw new IllegalArgumentException("Missing line for " + label + " coordinates.");
+        }
+
+        String trimmed = line.trim();
+        String prefix = label + ":";
+        if (!trimmed.toLowerCase().startsWith(prefix)) {
+            throw new IllegalArgumentException("Expected '" + prefix + " row,col' but got: " + line);
+        }
+
+        String coordinateText = trimmed.substring(prefix.length()).trim();
+        String[] parts = coordinateText.split(",");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Expected coordinates as row,col for " + label + ".");
+        }
+
+        int row = Integer.parseInt(parts[0].trim());
+        int col = Integer.parseInt(parts[1].trim());
+        return new int[] { row, col };
+    }
 
 
     /**
