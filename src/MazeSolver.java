@@ -7,13 +7,27 @@ public class MazeSolver {
             Maze maze = Maze.importFromFile(inputFile);
             printMaze(maze);
             validateMazeNeighbors(maze);
+
             if (showNeighbors) {
                 printNeighborTable(maze);
             }
+
+            // Make all cells available so we can visualize paths.
+            for (int r = 0; r < maze.getLength(); r++) {
+                for (int c = 0; c < maze.getWidth(); c++) {
+                    maze.createCell(r, c, 0);
+                }
+            }
+
+            MazeRenderer.showMaze(maze);
+
+
         } catch (Exception ex) {
             System.err.println("Failed to load or print maze: " + ex.getMessage());
             ex.printStackTrace();
         }
+
+
     }
 
 
