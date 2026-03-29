@@ -3,7 +3,6 @@ var class_maze =
     [ "Maze", "class_maze.html#a64794a0b1cbed9d04736002da7ee62cb", null ],
     [ "buildNeighborTableLines", "class_maze.html#a87ee5eb9a8eac29ec2d4595877d9a0da", null ],
     [ "createCell", "class_maze.html#ad96d7e5ccf65fe29e318bd0c39b39a6a", null ],
-    [ "createWall", "class_maze.html#a6486e0e9824c0831dc223958176e7661", null ],
     [ "exportToFile", "class_maze.html#ae20cb68cb5dc52cf20d04c669d0cde3e", null ],
     [ "getGoal", "class_maze.html#a4abf627d4654079a2ab0e03b32df5173", null ],
     [ "getLength", "class_maze.html#a7bf4e7fb124ff2a0773f73b82af0ad73", null ],

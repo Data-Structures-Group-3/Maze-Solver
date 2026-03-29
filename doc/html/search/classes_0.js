@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['maze_0',['Maze',['../class_maze.html',1,'']]],
-  ['mazesolver_1',['MazeSolver',['../class_maze_solver.html',1,'']]]
+  ['algorithm_0',['Algorithm',['../enum_maze_solver_1_1_algorithm.html',1,'MazeSolver']]]
 ];
