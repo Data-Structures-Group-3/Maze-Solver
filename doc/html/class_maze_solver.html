@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Maze-Solver
+   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.1</span>
    </div>
   </td>
  </tr>
@@ -97,20 +97,218 @@ $(function(){initNavTree('class_maze_solver.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_maze_solver-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">MazeSolver Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:af882787f7dc281c9e1f1aaca3b8cea58" id="r_af882787f7dc281c9e1f1aaca3b8cea58"><td class="memItemLeft" align="right" valign="top"><a id="af882787f7dc281c9e1f1aaca3b8cea58" name="af882787f7dc281c9e1f1aaca3b8cea58"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (String[] args)</td></tr>
-<tr class="separator:af882787f7dc281c9e1f1aaca3b8cea58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="enum_maze_solver_1_1_algorithm.html">Algorithm</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a9baf570c82f61e83d1e11e8bb8a93e3c" id="r_a9baf570c82f61e83d1e11e8bb8a93e3c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9baf570c82f61e83d1e11e8bb8a93e3c">setAlg</a> (String alg)</td></tr>
+<tr class="separator:a9baf570c82f61e83d1e11e8bb8a93e3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4223613a3ef49712b3a81d02931e998c" id="r_a4223613a3ef49712b3a81d02931e998c"><td class="memItemLeft" align="right" valign="top">String&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4223613a3ef49712b3a81d02931e998c">getAlg</a> ()</td></tr>
+<tr class="separator:a4223613a3ef49712b3a81d02931e998c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19e7e09b1cf169d44927f2fbb1a4a9f9" id="r_a19e7e09b1cf169d44927f2fbb1a4a9f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19e7e09b1cf169d44927f2fbb1a4a9f9">setMaze</a> (<a class="el" href="class_maze.html">Maze</a> maze)</td></tr>
+<tr class="separator:a19e7e09b1cf169d44927f2fbb1a4a9f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4731d9d114db6ed8934c1bb5b5153355" id="r_a4731d9d114db6ed8934c1bb5b5153355"><td class="memItemLeft" align="right" valign="top">Maze.Node&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4731d9d114db6ed8934c1bb5b5153355">updateSolve</a> ()</td></tr>
+<tr class="separator:a4731d9d114db6ed8934c1bb5b5153355"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e2cd30b080991b73b0d717e1862b74d" id="r_a1e2cd30b080991b73b0d717e1862b74d"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e2cd30b080991b73b0d717e1862b74d">isFinished</a> ()</td></tr>
+<tr class="separator:a1e2cd30b080991b73b0d717e1862b74d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a976101159c6108d2600323fbd913f5d7" id="r_a976101159c6108d2600323fbd913f5d7"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a976101159c6108d2600323fbd913f5d7">isSolved</a> ()</td></tr>
+<tr class="separator:a976101159c6108d2600323fbd913f5d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a930cd51699c61b24fa70f73072607ad5" id="r_a930cd51699c61b24fa70f73072607ad5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a930cd51699c61b24fa70f73072607ad5">getVisitedCount</a> ()</td></tr>
+<tr class="separator:a930cd51699c61b24fa70f73072607ad5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f7895d3d944960d5c68b7b5d4e33471" id="r_a5f7895d3d944960d5c68b7b5d4e33471"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f7895d3d944960d5c68b7b5d4e33471">resetSearch</a> ()</td></tr>
+<tr class="separator:a5f7895d3d944960d5c68b7b5d4e33471"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Incremental maze solver that supports DFS, BFS, and A*.</p>
+<p>The solver keeps internal state between calls to <code><a class="el" href="#a4731d9d114db6ed8934c1bb5b5153355">updateSolve()</a></code>, so callers can visualize or inspect each step one node at a time.</p>
+<p>Typical usage: create a solver, set algorithm and maze, then call <code><a class="el" href="#a4731d9d114db6ed8934c1bb5b5153355">updateSolve()</a></code> repeatedly until <code><a class="el" href="#a1e2cd30b080991b73b0d717e1862b74d">isFinished()</a></code> returns true. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a4223613a3ef49712b3a81d02931e998c" name="a4223613a3ef49712b3a81d02931e998c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4223613a3ef49712b3a81d02931e998c">&#9670;&#160;</a></span>getAlg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">String MazeSolver.getAlg </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Gets the active algorithm label.</p>
+<dl class="section return"><dt>Returns</dt><dd>display label for the current algorithm </dd></dl>
+
+</div>
+</div>
+<a id="a930cd51699c61b24fa70f73072607ad5" name="a930cd51699c61b24fa70f73072607ad5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a930cd51699c61b24fa70f73072607ad5">&#9670;&#160;</a></span>getVisitedCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int MazeSolver.getVisitedCount </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Gets count of nodes visited in the current run.</p>
+<dl class="section return"><dt>Returns</dt><dd>number of visited nodes since last reset </dd></dl>
+
+</div>
+</div>
+<a id="a1e2cd30b080991b73b0d717e1862b74d" name="a1e2cd30b080991b73b0d717e1862b74d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e2cd30b080991b73b0d717e1862b74d">&#9670;&#160;</a></span>isFinished()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean MazeSolver.isFinished </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Indicates whether this run has terminated.</p>
+<dl class="section return"><dt>Returns</dt><dd>true when goal was found or search space was exhausted </dd></dl>
+
+</div>
+</div>
+<a id="a976101159c6108d2600323fbd913f5d7" name="a976101159c6108d2600323fbd913f5d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a976101159c6108d2600323fbd913f5d7">&#9670;&#160;</a></span>isSolved()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean MazeSolver.isSolved </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Indicates whether the current run found the goal.</p>
+<dl class="section return"><dt>Returns</dt><dd>true when goal node has been reached </dd></dl>
+
+</div>
+</div>
+<a id="a5f7895d3d944960d5c68b7b5d4e33471" name="a5f7895d3d944960d5c68b7b5d4e33471"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f7895d3d944960d5c68b7b5d4e33471">&#9670;&#160;</a></span>resetSearch()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MazeSolver.resetSearch </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Resets transient search state so solving can start fresh.</p>
+<p>This keeps the currently assigned maze and algorithm. </p>
+
+</div>
+</div>
+<a id="a9baf570c82f61e83d1e11e8bb8a93e3c" name="a9baf570c82f61e83d1e11e8bb8a93e3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9baf570c82f61e83d1e11e8bb8a93e3c">&#9670;&#160;</a></span>setAlg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MazeSolver.setAlg </td>
+          <td>(</td>
+          <td class="paramtype">String</td>          <td class="paramname"><span class="paramname"><em>alg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Sets which algorithm to run.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">alg</td><td>algorithm label. Accepted values are DFS, BFS, A*, ASTAR, and A_STAR (case-insensitive) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">IllegalArgumentException</td><td>if <code class="JavaDocCode">alg</code> is null or unsupported </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a19e7e09b1cf169d44927f2fbb1a4a9f9" name="a19e7e09b1cf169d44927f2fbb1a4a9f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19e7e09b1cf169d44927f2fbb1a4a9f9">&#9670;&#160;</a></span>setMaze()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MazeSolver.setMaze </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_maze.html">Maze</a></td>          <td class="paramname"><span class="paramname"><em>maze</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Assigns the maze instance to solve.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">maze</td><td>maze object to solve; start/goal are validated when solving begins </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4731d9d114db6ed8934c1bb5b5153355" name="a4731d9d114db6ed8934c1bb5b5153355"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4731d9d114db6ed8934c1bb5b5153355">&#9670;&#160;</a></span>updateSolve()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Maze.Node MazeSolver.updateSolve </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Advances solving by exactly one visited node.</p>
+<dl class="section return"><dt>Returns</dt><dd>node visited in this step, or <code class="JavaDocCode">null</code> if solving is complete or no work remains </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">IllegalStateException</td><td>if maze/start/goal are not configured </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/<b>MazeSolver.java</b></li>
+<li>src/<a class="el" href="_maze_solver_8java.html">MazeSolver.java</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

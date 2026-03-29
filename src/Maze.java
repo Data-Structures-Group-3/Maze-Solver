@@ -6,6 +6,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Core maze model storing occupancy, neighbor links, and start/goal nodes.
+ *
+ * <p>The maze uses a rectangular grid of {@link Node} objects. Traversable
+ * cells contain a Node reference and blocked cells are {@code null}. Neighbor
+ * links represent valid movement between adjacent traversable cells.
+ *
+ * <p>Example import format for {@link #importFromFile(String)} is:
+ * row count, column count, {@code start: row,col}, {@code end: row,col},
+ * then one layout row per maze row using {@code 1} (path) and {@code 0} (wall).
+ */
 public class Maze {
 
     /**
@@ -93,7 +104,6 @@ public class Maze {
 
     // Maze grid and dimensions
     private Node[][] grid;
-    private boolean[][] occupied;
     private int length;
     private int width;
     private Node start;
@@ -101,6 +111,10 @@ public class Maze {
     
     /**
      * Initializes a maze with fixed dimensions.
+        *
+        * <p>A new maze starts empty: all cells are {@code null} (blocked) until
+        * paths are created explicitly via {@link #createCell(int, int, int)} or
+        * populated through {@link #importFromFile(String)}.
      *
      * @param length total number of rows in the maze
      * @param width total number of columns in the maze
@@ -109,68 +123,15 @@ public class Maze {
         this.length = length;
         this.width = width;
         this.grid = new Node[length][width];
-        this.occupied = new boolean[length][width];
-        initializeGrid();
     }
     
-    /**
-     * Initializes the backing arrays with nodes and marks all cells unoccupied.
-     */
-    private void initializeGrid() {
-        // Create all nodes
-        for (int l = 0; l < length; l++) {
-            for (int w = 0; w < width; w++) {
-                grid[l][w] = new Node(l, w);
-                occupied[l][w] = false; // Initially, all cells are unoccupied, no paths
-            }
-        }
-        
-    }
-    
-
-    /**
-     * Creates a wall between two adjacent in-bounds cells by removing
-     * neighbor references in both directions.
-     *
-     * @param row1 row of the first cell
-     * @param col1 column of the first cell
-     * @param row2 row of the second cell
-     * @param col2 column of the second cell
-     */
-    public void createWall(int row1, int col1, int row2, int col2) {
-        if (isInBounds(row1, col1) && isInBounds(row2, col2)) {
-            Node node1 = grid[row1][col1];
-            Node node2 = grid[row2][col2];
-            
-            // Determine direction from node1 to node2
-            if (row1 == row2) {
-                // Same row: EAST or WEST
-                if (col1 < col2) {
-                    // node1 is WEST of node2
-                    node1.neighbors[Maze.Dir.EAST.ordinal()] = null;
-                    node2.neighbors[Maze.Dir.WEST.ordinal()] = null;
-                } else {
-                    // node1 is EAST of node2
-                    node1.neighbors[Maze.Dir.WEST.ordinal()] = null;
-                    node2.neighbors[Maze.Dir.EAST.ordinal()] = null;
-                }
-            } else if (col1 == col2) {
-                // Same column: NORTH or SOUTH
-                if (row1 < row2) {
-                    // node1 is NORTH of node2
-                    node1.neighbors[Maze.Dir.SOUTH.ordinal()] = null;
-                    node2.neighbors[Maze.Dir.NORTH.ordinal()] = null;
-                } else {
-                    // node1 is SOUTH of node2
-                    node1.neighbors[Maze.Dir.NORTH.ordinal()] = null;
-                    node2.neighbors[Maze.Dir.SOUTH.ordinal()] = null;
-                }
-            }
-        }
-    }
 
     /**
      * Marks a cell as occupied and creates a node at that coordinate.
+        *
+        * <p>Establishes bidirectional neighbor links immediately: this node is linked
+     * to existing occupied neighbors, and those neighbors are updated to point back.
+     * The {@code direction} parameter is currently reserved and ignored.
      *
      * @param row row index of the cell
      * @param col column index of the cell
@@ -178,44 +139,34 @@ public class Maze {
      */
     public void createCell(int row, int col, int direction) {
         if (isInBounds(row, col)) {
-            occupied[row][col] = true;
-            grid[row][col] = new Node(row, col);
+            Node node = new Node(row, col);
+            grid[row][col] = node;
+            
+            // Link to existing neighbors and update their reverse links
+            linkToNeighbor(node, row - 1, col, Dir.NORTH, Dir.SOUTH);
+            linkToNeighbor(node, row, col + 1, Dir.EAST, Dir.WEST);
+            linkToNeighbor(node, row + 1, col, Dir.SOUTH, Dir.NORTH);
+            linkToNeighbor(node, row, col - 1, Dir.WEST, Dir.EAST);
+        }
+    }
+    
+    /**
+     * Helper method to establish bidirectional neighbor link.
+     * Links the new node in a given direction and updates the neighbor's reverse link.
+     *
+     * @param newNode the newly created node
+     * @param neighborRow row of the potential neighbor
+     * @param neighborCol column of the potential neighbor
+     * @param forwardDir direction from new node to neighbor
+     * @param reverseDir direction from neighbor back to new node
+     */
+    private void linkToNeighbor(Node newNode, int neighborRow, int neighborCol, Dir forwardDir, Dir reverseDir) {
+        if (isInBounds(neighborRow, neighborCol) && grid[neighborRow][neighborCol] != null) {
+            Node neighbor = grid[neighborRow][neighborCol];
+            newNode.setNeighbor(forwardDir, neighbor);
+            neighbor.setNeighbor(reverseDir, newNode);
         }
     }   
-
-    /**
-     * Rebuild all neighbor links using the occupied layout.
-     * Occupied adjacent cells are connected; walls and boundaries are null.
-     */
-    private void rebuildNeighborsFromOccupied() {
-        for (int row = 0; row < length; row++) {
-            for (int col = 0; col < width; col++) {
-                if (!occupied[row][col] || grid[row][col] == null) {
-                    continue;
-                }
-
-                Node node = grid[row][col];
-                node.setNeighbor(Dir.NORTH, getNodeIfOccupied(row - 1, col));
-                node.setNeighbor(Dir.EAST, getNodeIfOccupied(row, col + 1));
-                node.setNeighbor(Dir.SOUTH, getNodeIfOccupied(row + 1, col));
-                node.setNeighbor(Dir.WEST, getNodeIfOccupied(row, col - 1));
-            }
-        }
-    }
-
-    /**
-     * Returns the node at a coordinate only if it is both in-bounds and occupied.
-     *
-     * @param row row index to inspect
-     * @param col column index to inspect
-     * @return node at that coordinate, or null if unavailable
-     */
-    private Node getNodeIfOccupied(int row, int col) {
-        if (!isInBounds(row, col) || !occupied[row][col]) {
-            return null;
-        }
-        return grid[row][col];
-    }
 
     /**
      * Import a maze from text using this format:
@@ -223,7 +174,11 @@ public class Maze {
      * line 2: column count
      * line 3: start: row,col
      * line 4: end: row,col
-     * line 5+: layout rows of 1s and 0s
+    * line 5+: layout rows of 1s and 0s
+    *
+    * <p>Cells marked {@code 1} are created through
+    * {@link #createCell(int, int, int)} so neighbor links are built incrementally
+    * and remain bidirectionally consistent.
     *
     * @param filePath path to the maze text file
     * @return newly created Maze instance populated from file data
@@ -263,18 +218,14 @@ public class Maze {
             for (int col = 0; col < width; col++) {
                 char cell = layoutRow.charAt(col);
                 if (cell == '1') {
-                    maze.occupied[row][col] = true;
-                    maze.grid[row][col] = new Node(row, col);
+                    maze.createCell(row, col, 0);
                 } else if (cell == '0') {
-                    maze.occupied[row][col] = false;
                     maze.grid[row][col] = null;
                 } else {
                     throw new IllegalArgumentException("Invalid cell character '" + cell + "' at row " + row + ", col " + col + ". Use only 0 or 1.");
                 }
             }
         }
-
-        maze.rebuildNeighborsFromOccupied();
 
         if (!maze.isInBounds(startPos[0], startPos[1]) || !maze.isOccupied(startPos[0], startPos[1])) {
             throw new IllegalArgumentException("Start position must be in bounds and on a path cell (1).");
@@ -311,7 +262,7 @@ public class Maze {
 
         for (int row = 0; row < length; row++) {
             for (int col = 0; col < width; col++) {
-                output.append(occupied[row][col] ? '1' : '0');
+                output.append(grid[row][col] != null ? '1' : '0');
             }
             output.append(System.lineSeparator());
         }
@@ -434,7 +385,7 @@ public class Maze {
      */
     public boolean isOccupied(int row, int col) {
         if (isInBounds(row, col)) {
-            return occupied[row][col];
+            return grid[row][col] != null;
         }
         return false;
     }
