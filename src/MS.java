@@ -1,4 +1,6 @@
 import java.awt.Color;
+import java.awt.FileDialog;
+import java.awt.Frame;
 import javax.swing.Timer;
 
 /**
@@ -28,13 +30,34 @@ public class MS {
      * @param args command line arguments (currently unused)
      */
     public static void main(String[] args) {
-        String inputFile = "src/test.txt";
+        String inputFile;
         String algorithm = "A*";
         boolean showNeighbors = true;
         int stepDelayMs = 200;
         Color visitedColor = new Color(0xF4C542);
 
         try {
+            // Allow the user to choose a file
+            FileDialog openDialog = new FileDialog((Frame)null, "Select Maze File", FileDialog.LOAD);
+
+            // Default directory set to project folder
+            openDialog.setDirectory("."); 
+            // Show only text files
+            openDialog.setFile("*.txt");
+            openDialog.setVisible(true);
+
+            // Get the results
+            String fileName = openDialog.getFile();
+            String directory = openDialog.getDirectory();
+
+            if (fileName == null) {
+                System.out.println("No File Chosen");
+                return; // user hit 'Cancel'
+            }
+
+            // Combine them into a full path
+            inputFile = directory + fileName;
+
             Maze maze = Maze.importFromFile(inputFile);
             printMaze(maze);
             validateMazeNeighbors(maze);
