@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['createcell_0',['createCell',['../class_maze.html#ad96d7e5ccf65fe29e318bd0c39b39a6a',1,'Maze']]],
-  ['createwall_1',['createWall',['../class_maze.html#a6486e0e9824c0831dc223958176e7661',1,'Maze']]]
+  ['bfs_0',['BFS',['../enum_maze_solver_1_1_algorithm.html#aa01154bed36c53d4d3b0d1d1fa2e2777',1,'MazeSolver::Algorithm']]],
+  ['buildneighbortablelines_1',['buildNeighborTableLines',['../class_maze.html#a87ee5eb9a8eac29ec2d4595877d9a0da',1,'Maze']]]
 ];
