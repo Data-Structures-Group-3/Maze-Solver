@@ -28,7 +28,7 @@ public class MS {
      * @param args command line arguments (currently unused)
      */
     public static void main(String[] args) {
-        String inputFile = "test.txt";
+        String inputFile = "src/test.txt";
         String algorithm = "A*";
         boolean showNeighbors = true;
         int stepDelayMs = 200;
@@ -65,6 +65,7 @@ public class MS {
                 if (solver.isFinished()) {
                     solveTimer[0].stop();
                     if (solver.isSolved()) {
+                        MazeRenderer.setCellColors(solver.getFinalPath(), Color.CYAN);
                         System.out.println("Solve result: goal reached using " + solver.getAlg() +
                                 " after visiting " + solver.getVisitedCount() + " node(s).");
                     } else {
