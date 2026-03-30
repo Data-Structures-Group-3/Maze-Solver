@@ -32,9 +32,11 @@ Maze-Solver has four main responsibilities:
 
 ## Features
 
-- Title-screen startup flow with file picker.
+- Title-screen startup flow with import-or-generate selection.
+- Random maze generation using traditional corridor carving.
 - Interactive solver controls for start, pause, restart, algorithm, and delay.
 - Instant solve mode that runs to completion in a background thread.
+- In-session map controls for loading a different map, saving the current map, and generating a new random map.
 - Paint-based grid rendering for all maze sizes.
 - Viewport clipping so only visible cells are painted.
 - Zoom controls (+/- and Ctrl + mouse wheel).
@@ -67,22 +69,32 @@ java -cp src MS
 Startup sequence:
 
 1. Title screen appears.
-2. Click Start.
-3. Select a maze text file.
+2. Choose Import Maze or Generate Random.
+3. If importing, select a maze text file; if generating, enter rows/columns.
 4. Solve interactively.
 
 ## How to Use
 
-After loading a maze:
+After loading or generating a maze:
 
 - Start: begin or resume timer-based solving.
 - Pause: stop solving without clearing current search state.
 - Restart: clear colors and reset the active algorithm state.
+- Load Map: replace the current session maze with another file.
+- Save Map: export the currently loaded maze to a text file.
+- Generate Map: create and load a new random maze without leaving the solver window.
 - Algorithm: choose DFS, BFS, or A*.
 - Step Delay (ms): set timer delay for step-by-step mode (1..5000).
 - Instant: solve to completion immediately (async worker).
 - Zoom +/-: adjust cell size.
 - Ctrl + Mouse Wheel: zoom while cursor is over the maze viewport.
+
+Random generation details:
+
+- Uses a depth-first backtracking corridor-carving strategy for a classic maze look.
+- Keeps the outer border blocked.
+- Ensures the configured goal cell is connected to the carved maze.
+- Extends carving into final interior row/column on even dimensions to avoid persistent right/bottom wall strips.
 
 ## Maze File Format
 

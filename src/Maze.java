@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Core maze model storing occupancy, neighbor links, and start/goal nodes.
@@ -260,6 +261,193 @@ public class Maze {
         maze.setStart(startPos[0], startPos[1]);
         maze.setGoal(endPos[0], endPos[1]);
         return maze;
+    }
+
+    /**
+     * Builds a random, guaranteed-solvable maze with the given dimensions.
+     *
+      * <p>The generated maze keeps the outer border blocked and carves interior
+      * corridors using a depth-first backtracking strategy to produce a classic
+      * maze appearance. For even dimensions, a follow-up pass extends corridors
+      * into the final interior row/column so right/bottom edges are not left as
+      * persistent solid strips.
+     *
+     * @param length total number of rows (minimum 3)
+     * @param width total number of columns (minimum 3)
+     * @return newly generated solvable maze
+     * @throws IllegalArgumentException if dimensions are smaller than 3
+     */
+    public static Maze generateRandomMaze(int length, int width) {
+        if (length < 3 || width < 3) {
+            throw new IllegalArgumentException("Random maze dimensions must be at least 3x3.");
+        }
+
+        final int startRow = 1;
+        final int startCol = 1;
+        final int goalRow = length - 2;
+        final int goalCol = width - 2;
+
+        Random random = new Random();
+        boolean[][] open = new boolean[length][width];
+
+        carveTraditionalMaze(open, startRow, startCol, random);
+        extendEvenInteriorEdges(open, random);
+        connectGoalToMaze(open, goalRow, goalCol, random);
+
+        Maze maze = new Maze(length, width);
+        for (int r = 0; r < length; r++) {
+            for (int c = 0; c < width; c++) {
+                if (open[r][c]) {
+                    maze.createCell(r, c, 0);
+                }
+            }
+        }
+
+        maze.setStart(startRow, startCol);
+        maze.setGoal(goalRow, goalCol);
+        return maze;
+    }
+
+    /**
+     * Carves a traditional maze by depth-first backtracking over interior cells.
+     *
+     * @param open mutable occupancy matrix
+     * @param startRow carve start row (typically 1)
+     * @param startCol carve start column (typically 1)
+     * @param random random source
+     */
+    private static void carveTraditionalMaze(boolean[][] open, int startRow, int startCol, Random random) {
+        List<int[]> stack = new ArrayList<>();
+        stack.add(new int[] { startRow, startCol });
+        open[startRow][startCol] = true;
+
+        int[][] directions = new int[][] {
+            { -2, 0 },
+            { 0, 2 },
+            { 2, 0 },
+            { 0, -2 }
+        };
+
+        while (!stack.isEmpty()) {
+            int[] current = stack.get(stack.size() - 1);
+            int row = current[0];
+            int col = current[1];
+
+            List<int[]> candidates = new ArrayList<>();
+            for (int i = 0; i < directions.length; i++) {
+                int nRow = row + directions[i][0];
+                int nCol = col + directions[i][1];
+                if (nRow <= 0 || nRow >= open.length - 1 || nCol <= 0 || nCol >= open[0].length - 1) {
+                    continue;
+                }
+                if (!open[nRow][nCol]) {
+                    candidates.add(new int[] { nRow, nCol });
+                }
+            }
+
+            if (candidates.isEmpty()) {
+                stack.remove(stack.size() - 1);
+                continue;
+            }
+
+            int[] next = candidates.get(random.nextInt(candidates.size()));
+            int wallRow = row + ((next[0] - row) / 2);
+            int wallCol = col + ((next[1] - col) / 2);
+            open[wallRow][wallCol] = true;
+            open[next[0]][next[1]] = true;
+            stack.add(next);
+        }
+    }
+
+    /**
+     * Extends carved corridors into the final interior row/column for even dimensions.
+     *
+     * <p>Backtracking on a two-cell step naturally visits odd-indexed cells. For even
+     * dimensions, the last interior row/column are even indexes and can otherwise remain
+     * mostly closed. This pass opens connectors from already-open neighbors.
+     *
+     * @param open mutable occupancy matrix
+     * @param random random source
+     */
+    private static void extendEvenInteriorEdges(boolean[][] open, Random random) {
+        int lastInteriorRow = open.length - 2;
+        int lastInteriorCol = open[0].length - 2;
+
+        if (lastInteriorRow % 2 == 0) {
+            int opened = 0;
+            for (int col = 1; col <= lastInteriorCol; col++) {
+                if (open[lastInteriorRow - 1][col] && random.nextDouble() < 0.60) {
+                    open[lastInteriorRow][col] = true;
+                    opened++;
+                }
+            }
+            if (opened == 0) {
+                for (int col = 1; col <= lastInteriorCol; col++) {
+                    if (open[lastInteriorRow - 1][col]) {
+                        open[lastInteriorRow][col] = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (lastInteriorCol % 2 == 0) {
+            int opened = 0;
+            for (int row = 1; row <= lastInteriorRow; row++) {
+                if (open[row][lastInteriorCol - 1] && random.nextDouble() < 0.60) {
+                    open[row][lastInteriorCol] = true;
+                    opened++;
+                }
+            }
+            if (opened == 0) {
+                for (int row = 1; row <= lastInteriorRow; row++) {
+                    if (open[row][lastInteriorCol - 1]) {
+                        open[row][lastInteriorCol] = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Ensures the configured goal coordinate is open and connected to the maze.
+        *
+        * <p>If the goal cell was not reached by the carved graph, this method
+        * opens a short connector toward the carved region so solving always has a
+        * valid target.
+     *
+     * @param open mutable occupancy matrix
+     * @param goalRow goal row coordinate
+     * @param goalCol goal column coordinate
+     * @param random random source
+     */
+    private static void connectGoalToMaze(boolean[][] open, int goalRow, int goalCol, Random random) {
+        boolean[][] originallyOpen = new boolean[open.length][open[0].length];
+        for (int row = 0; row < open.length; row++) {
+            System.arraycopy(open[row], 0, originallyOpen[row], 0, open[row].length);
+        }
+
+        int row = goalRow;
+        int col = goalCol;
+        open[row][col] = true;
+
+        while (!originallyOpen[row][col]) {
+            if (row > 1 && col > 1) {
+                if (random.nextBoolean()) {
+                    row--;
+                } else {
+                    col--;
+                }
+            } else if (row > 1) {
+                row--;
+            } else if (col > 1) {
+                col--;
+            } else {
+                break;
+            }
+            open[row][col] = true;
+        }
     }
 
     /**

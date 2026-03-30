@@ -38,10 +38,10 @@ import javax.swing.Timer;
  *
  * <p>This class owns the full Swing-driven UX flow:
  * <ul>
- *   <li>Title screen presentation</li>
- *   <li>Maze file selection and load error reporting</li>
+ *   <li>Title screen mode selection (import or random generation)</li>
+ *   <li>Maze file selection or random maze creation</li>
  *   <li>Maze grid rendering with a paint-based renderer for all maze sizes</li>
- *   <li>Runtime solver controls (start/pause/restart, delay, instant mode)</li>
+ *   <li>Runtime solver controls (start/pause/restart, delay, instant mode, map load/save/generate)</li>
  *   <li>Zoom handling (buttons and Ctrl+mouse wheel)</li>
  * </ul>
  *
@@ -126,7 +126,7 @@ public final class MazeRenderer {
      * <p>This is the recommended public entrypoint for GUI startup.
      */
     public static void launchFromTitleScreen() {
-        showTitleScreen(MazeRenderer::promptForMazeAndRun);
+        showTitleScreen();
     }
 
     // ---------------------------------------------------------------------
@@ -134,11 +134,9 @@ public final class MazeRenderer {
     // ---------------------------------------------------------------------
 
     /**
-     * @brief Displays the title screen and invokes a callback on Start.
-     *
-     * @param onStartGame callback executed when the Start button is pressed
+     * @brief Displays the title screen and allows import or random generation.
      */
-    private static void showTitleScreen(Runnable onStartGame) {
+    private static void showTitleScreen() {
         if (titleFrame != null) {
             titleFrame.dispose();
         }
@@ -151,23 +149,33 @@ public final class MazeRenderer {
         JPanel mainPanel = new BackgroundImagePanel(TITLE_SCREEN_IMAGE_PATH);
         mainPanel.setLayout(new GridBagLayout());
 
-        JButton startButton = new JButton("START MAZE");
-        styleTitleButton(startButton);
-        startButton.addActionListener(e -> {
+        JButton importButton = new JButton("IMPORT MAZE");
+        styleTitleButton(importButton);
+        importButton.addActionListener(e -> {
             titleFrame.dispose();
             titleFrame = null;
-            if (onStartGame != null) {
-                onStartGame.run();
-            }
+            promptForMazeAndRun();
+        });
+
+        JButton generateButton = new JButton("GENERATE RANDOM");
+        styleTitleButton(generateButton);
+        generateButton.addActionListener(e -> {
+            titleFrame.dispose();
+            titleFrame = null;
+            promptForRandomMazeAndRun();
         });
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(300, 0, 0, 0);
+        gbc.insets = new Insets(270, 0, 12, 0);
 
-        mainPanel.add(startButton, gbc);
+        mainPanel.add(importButton, gbc);
+
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        mainPanel.add(generateButton, gbc);
         titleFrame.add(mainPanel);
         titleFrame.setVisible(true);
     }
@@ -187,22 +195,12 @@ public final class MazeRenderer {
         try {
             String inputFile = chooseMazeFile();
             if (inputFile == null) {
-                showTitleScreen(MazeRenderer::promptForMazeAndRun);
+                showTitleScreen();
                 return;
             }
 
             Maze maze = Maze.importFromFile(inputFile);
-            printMaze(maze);
-            validateMazeNeighbors(maze);
-            if (DEFAULT_SHOW_NEIGHBORS) {
-                printNeighborTable(maze);
-            }
-
-            runInteractiveSolveSession(
-                    maze,
-                    DEFAULT_SESSION_ALGORITHM,
-                    DEFAULT_SESSION_STEP_DELAY_MS,
-                    DEFAULT_VISITED_COLOR);
+            launchMazeSession(maze, DEFAULT_SESSION_ALGORITHM, DEFAULT_SESSION_STEP_DELAY_MS);
         } catch (Exception ex) {
             System.err.println("Failed to load or print maze: " + ex.getMessage());
             ex.printStackTrace();
@@ -211,8 +209,94 @@ public final class MazeRenderer {
                     "Failed to load maze: " + ex.getMessage(),
                     "Maze Load Error",
                     JOptionPane.ERROR_MESSAGE);
-            showTitleScreen(MazeRenderer::promptForMazeAndRun);
+            showTitleScreen();
         }
+    }
+
+    /**
+     * @brief Prompts for dimensions, generates a random maze, and starts a session.
+     */
+    private static void promptForRandomMazeAndRun() {
+        int[] dimensions = promptForRandomMazeDimensions();
+        if (dimensions == null) {
+            showTitleScreen();
+            return;
+        }
+
+        try {
+            Maze maze = Maze.generateRandomMaze(dimensions[0], dimensions[1]);
+            launchMazeSession(maze, DEFAULT_SESSION_ALGORITHM, DEFAULT_SESSION_STEP_DELAY_MS);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Failed to generate random maze: " + ex.getMessage(),
+                    "Maze Generation Error",
+                    JOptionPane.ERROR_MESSAGE);
+            showTitleScreen();
+        }
+    }
+
+    /**
+     * @brief Prompts for random maze dimensions.
+     *
+     * @return two-element array [rows, cols], or null when canceled
+     */
+    private static int[] promptForRandomMazeDimensions() {
+        JSpinner rowSpinner = new JSpinner(new SpinnerNumberModel(60, 3, 5000, 1));
+        JSpinner colSpinner = new JSpinner(new SpinnerNumberModel(60, 3, 5000, 1));
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(4, 4, 4, 4);
+        gbc.anchor = GridBagConstraints.WEST;
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Rows:"), gbc);
+        gbc.gridx = 1;
+        panel.add(rowSpinner, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(new JLabel("Columns:"), gbc);
+        gbc.gridx = 1;
+        panel.add(colSpinner, gbc);
+
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                panel,
+                "Generate Random Maze",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+
+        if (result != JOptionPane.OK_OPTION) {
+            return null;
+        }
+
+        int rows = ((Number) rowSpinner.getValue()).intValue();
+        int cols = ((Number) colSpinner.getValue()).intValue();
+        return new int[] { rows, cols };
+    }
+
+    /**
+     * @brief Prints diagnostics and launches an interactive maze session.
+     *
+     * @param maze maze instance to run
+     * @param initialAlgorithm default algorithm label
+     * @param initialStepDelayMs default step delay
+     */
+    private static void launchMazeSession(Maze maze, String initialAlgorithm, int initialStepDelayMs) {
+        printMaze(maze);
+        validateMazeNeighbors(maze);
+        if (DEFAULT_SHOW_NEIGHBORS) {
+            printNeighborTable(maze);
+        }
+
+        runInteractiveSolveSession(
+                maze,
+                initialAlgorithm,
+                initialStepDelayMs,
+                DEFAULT_VISITED_COLOR);
     }
 
     /**
@@ -236,9 +320,9 @@ public final class MazeRenderer {
     }
 
     /**
-     * @brief Applies the visual style used by the title Start button.
+     * @brief Applies the visual style used by title-screen action buttons.
      *
-     * @param button title Start button
+     * @param button title action button
      */
     private static void styleTitleButton(JButton button) {
         button.setPreferredSize(new Dimension(200, 60));
@@ -612,6 +696,9 @@ public final class MazeRenderer {
          *   <li><b>Start</b>: begin or continue stepping</li>
          *   <li><b>Pause</b>: stop timer without resetting search</li>
          *   <li><b>Restart</b>: reset search and recolor cells</li>
+         *   <li><b>Load Map</b>: replace current session maze from file</li>
+         *   <li><b>Save Map</b>: export current session maze to file</li>
+         *   <li><b>Generate Map</b>: replace current session maze with a new random map</li>
          *   <li><b>Step Delay</b>: 1..5000 ms for timer-driven solving</li>
          *   <li><b>Instant</b>: solve to completion with timer-mode-equivalent final output</li>
          *   <li><b>Zoom +/-</b>: adjust cell size in fixed increments</li>
@@ -625,6 +712,9 @@ public final class MazeRenderer {
         JButton startButton = new JButton("Start");
         JButton pauseButton = new JButton("Pause");
         JButton restartButton = new JButton("Restart");
+        JButton loadMapButton = new JButton("Load Map");
+        JButton saveMapButton = new JButton("Save Map");
+        JButton generateMapButton = new JButton("Generate Map");
         JButton zoomOutButton = new JButton("-");
         JButton zoomInButton = new JButton("+");
 
@@ -656,12 +746,18 @@ public final class MazeRenderer {
             refreshRuntimeControlState();
         });
         restartButton.addActionListener(e -> handleRestartRequested());
+        loadMapButton.addActionListener(e -> handleLoadMapRequested());
+        saveMapButton.addActionListener(e -> handleSaveMapRequested());
+        generateMapButton.addActionListener(e -> handleGenerateMapRequested());
         zoomOutButton.addActionListener(e -> adjustZoom(-1));
         zoomInButton.addActionListener(e -> adjustZoom(1));
 
         controlPanel.add(startButton);
         controlPanel.add(pauseButton);
         controlPanel.add(restartButton);
+        controlPanel.add(loadMapButton);
+        controlPanel.add(saveMapButton);
+        controlPanel.add(generateMapButton);
         controlPanel.add(algorithmLabel);
         controlPanel.add(algorithmSelector);
         controlPanel.add(delayLabel);
@@ -676,6 +772,102 @@ public final class MazeRenderer {
         refreshRuntimeControlState();
 
         return controlPanel;
+    }
+
+    /**
+     * @brief Loads a different maze file and restarts the session with it.
+     */
+    private static void handleLoadMapRequested() {
+        String inputFile = chooseMazeFile();
+        if (inputFile == null) {
+            return;
+        }
+
+        String selectedAlgorithm = getSelectedAlgorithmLabel();
+        int selectedDelay = getSelectedStepDelayMsValue();
+
+        try {
+            Maze maze = Maze.importFromFile(inputFile);
+            launchMazeSession(maze, selectedAlgorithm, selectedDelay);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    mazeFrame,
+                    "Failed to load maze: " + ex.getMessage(),
+                    "Maze Load Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * @brief Saves the currently loaded maze to a text file.
+     */
+    private static void handleSaveMapRequested() {
+        if (renderedMaze == null) {
+            return;
+        }
+
+        String outputFile = chooseSaveMazeFile();
+        if (outputFile == null) {
+            return;
+        }
+
+        try {
+            renderedMaze.exportToFile(outputFile);
+            JOptionPane.showMessageDialog(
+                    mazeFrame,
+                    "Maze saved to:\n" + outputFile,
+                    "Maze Saved",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    mazeFrame,
+                    "Failed to save maze: " + ex.getMessage(),
+                    "Save Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * @brief Generates a new random maze and restarts the session with it.
+     */
+    private static void handleGenerateMapRequested() {
+        int[] dimensions = promptForRandomMazeDimensions();
+        if (dimensions == null) {
+            return;
+        }
+
+        String selectedAlgorithm = getSelectedAlgorithmLabel();
+        int selectedDelay = getSelectedStepDelayMsValue();
+
+        try {
+            Maze maze = Maze.generateRandomMaze(dimensions[0], dimensions[1]);
+            launchMazeSession(maze, selectedAlgorithm, selectedDelay);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    mazeFrame,
+                    "Failed to generate maze: " + ex.getMessage(),
+                    "Maze Generation Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * @brief Prompts for destination path when saving a maze file.
+     *
+     * @return selected absolute file path, or null when canceled
+     */
+    private static String chooseSaveMazeFile() {
+        FileDialog saveDialog = new FileDialog((Frame) null, "Save Maze File", FileDialog.SAVE);
+        saveDialog.setDirectory(".");
+        saveDialog.setFile("maze.txt");
+        saveDialog.setVisible(true);
+
+        String fileName = saveDialog.getFile();
+        String directory = saveDialog.getDirectory();
+        if (fileName == null) {
+            return null;
+        }
+        return directory + fileName;
     }
 
     /**

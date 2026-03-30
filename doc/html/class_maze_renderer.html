@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.4</span>
+   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.5</span>
    </div>
   </td>
  </tr>
@@ -122,13 +122,13 @@ Static Public Member Functions</h2></td></tr>
 <div class="textblock"><p>Renderer and UI controller for the maze application. </p>
 <p>This class owns the full Swing-driven UX flow: </p><ul>
 <li>
-Title screen presentation </li>
+Title screen mode selection (import or random generation) </li>
 <li>
-<a class="el" href="class_maze.html">Maze</a> file selection and load error reporting </li>
+<a class="el" href="class_maze.html">Maze</a> file selection or random maze creation </li>
 <li>
 <a class="el" href="class_maze.html">Maze</a> grid rendering with a paint-based renderer for all maze sizes </li>
 <li>
-Runtime solver controls (start/pause/restart, delay, instant mode) </li>
+Runtime solver controls (start/pause/restart, delay, instant mode, map load/save/generate) </li>
 <li>
 Zoom handling (buttons and Ctrl+mouse wheel) </li>
 </ul>
@@ -138,8 +138,8 @@ Zoom handling (buttons and Ctrl+mouse wheel) </li>
 <div class="line"><a class="code hl_class" href="class_maze_renderer.html">MazeRenderer</a>.<a class="code hl_function" href="#adc2cf2f7d52e5fa9a350025e6265fc66">setNodeColor</a>(node, Color.MAGENTA);</div>
 <div class="line"><a class="code hl_class" href="class_maze_renderer.html">MazeRenderer</a>.<a class="code hl_function" href="#a8b6f55abc0070fb2aa1dd520ae018af9">resetNodeColor</a>(node);</div>
 <div class="ttc" id="aclass_maze_renderer_html"><div class="ttname"><a href="class_maze_renderer.html">MazeRenderer</a></div><div class="ttdoc">Renderer and UI controller for the maze application.</div><div class="ttdef"><b>Definition</b> MazeRenderer.java:61</div></div>
-<div class="ttc" id="aclass_maze_renderer_html_a8b6f55abc0070fb2aa1dd520ae018af9"><div class="ttname"><a href="#a8b6f55abc0070fb2aa1dd520ae018af9">MazeRenderer.resetNodeColor</a></div><div class="ttdeci">static boolean resetNodeColor(Maze.Node node)</div><div class="ttdoc">Restores one node to its default semantic color.</div><div class="ttdef"><b>Definition</b> MazeRenderer.java:884</div></div>
-<div class="ttc" id="aclass_maze_renderer_html_adc2cf2f7d52e5fa9a350025e6265fc66"><div class="ttname"><a href="#adc2cf2f7d52e5fa9a350025e6265fc66">MazeRenderer.setNodeColor</a></div><div class="ttdeci">static boolean setNodeColor(Maze.Node node, Color color)</div><div class="ttdoc">Sets one node color using maze coordinates.</div><div class="ttdef"><b>Definition</b> MazeRenderer.java:868</div></div>
+<div class="ttc" id="aclass_maze_renderer_html_a8b6f55abc0070fb2aa1dd520ae018af9"><div class="ttname"><a href="#a8b6f55abc0070fb2aa1dd520ae018af9">MazeRenderer.resetNodeColor</a></div><div class="ttdeci">static boolean resetNodeColor(Maze.Node node)</div><div class="ttdoc">Restores one node to its default semantic color.</div><div class="ttdef"><b>Definition</b> MazeRenderer.java:1076</div></div>
+<div class="ttc" id="aclass_maze_renderer_html_adc2cf2f7d52e5fa9a350025e6265fc66"><div class="ttname"><a href="#adc2cf2f7d52e5fa9a350025e6265fc66">MazeRenderer.setNodeColor</a></div><div class="ttdeci">static boolean setNodeColor(Maze.Node node, Color color)</div><div class="ttdoc">Sets one node color using maze coordinates.</div><div class="ttdef"><b>Definition</b> MazeRenderer.java:1060</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a7395a4a185478c93f106b480189c1ef9" name="a7395a4a185478c93f106b480189c1ef9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7395a4a185478c93f106b480189c1ef9">&#9670;&#160;</a></span>launchFromTitleScreen()</h2>
