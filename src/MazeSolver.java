@@ -12,6 +12,18 @@ import java.awt.Point;
  *
  * <p>Typical usage: create a solver, set algorithm and maze, then call
  * {@link #updateSolve()} repeatedly until {@link #isFinished()} returns true.
+ * Example:
+ * @code
+ * MazeSolver solver = new MazeSolver();
+ * solver.setMaze(maze);
+ * solver.setAlg("A*");
+ * while (!solver.isFinished()) {
+ *     solver.updateSolve();
+ * }
+ * if (solver.isSolved()) {
+ *     List<Point> path = solver.getFinalPath();
+ * }
+ * @endcode
  */
 public class MazeSolver {
 
@@ -144,9 +156,12 @@ public class MazeSolver {
 
     
     /**
-     * Gets the final path when
-     * 
-     * @return A list containing pointers through the final path starting from the end
+     * Gets the final path after a successful solve.
+     *
+     * <p>The path is traced backward using the internal parent table, so the returned
+     * list begins at the goal and ends at the start.
+     *
+     * @return list of path points where {@code x=col, y=row}; empty if unsolved
      */
     public List<Point> getFinalPath() {
         List<Point> path = new java.util.ArrayList<>();
@@ -214,7 +229,8 @@ public class MazeSolver {
 
     /**
      * Initializes DFS/BFS state by seeding the frontier with the start node.
-     * Additionlly it creates a parent table used for the final path
+     *
+     * <p>Also allocates the parent table used for final path reconstruction.
      */
     private void initializeUninformedSearch() {
         discovered = new boolean[maze.getLength()][maze.getWidth()];
@@ -419,14 +435,14 @@ public class MazeSolver {
     }
 
     /**
-        * Computes the Manhattan-distance heuristic used by A*.
-        *
-        * <p>The value estimates remaining path length by summing horizontal and
-        * vertical offsets between two grid coordinates:
-        * {@code |from.row - to.row| + |from.col - to.col|}.
-        *
-        * <p>Example: from {@code (2,3)} to {@code (5,7)} gives
-        * {@code |2-5| + |3-7| = 3 + 4 = 7}.
+     * Computes the Manhattan-distance heuristic used by A*.
+     *
+     * <p>The value estimates remaining path length by summing horizontal and
+     * vertical offsets between two grid coordinates:
+     * {@code |from.row - to.row| + |from.col - to.col|}.
+     *
+     * <p>Example: from {@code (2,3)} to {@code (5,7)} gives
+     * {@code |2-5| + |3-7| = 3 + 4 = 7}.
      *
      * @param from current node being evaluated
      * @param to target node (typically maze goal)
