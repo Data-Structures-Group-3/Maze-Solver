@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.3</span>
+   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.5</span>
    </div>
   </td>
  </tr>
@@ -111,23 +111,35 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a7395a4a185478c93f106b480189c1ef9" id="r_a7395a4a185478c93f106b480189c1ef9"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7395a4a185478c93f106b480189c1ef9">launchFromTitleScreen</a> ()</td></tr>
 <tr class="memdesc:a7395a4a185478c93f106b480189c1ef9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the renderer-driven application flow from the title screen.  <br /></td></tr>
 <tr class="separator:a7395a4a185478c93f106b480189c1ef9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc2cf2f7d52e5fa9a350025e6265fc66" id="r_adc2cf2f7d52e5fa9a350025e6265fc66"><td class="memItemLeft" align="right" valign="top">static boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc2cf2f7d52e5fa9a350025e6265fc66">setNodeColor</a> (Maze.Node node, Color color)</td></tr>
+<tr class="memdesc:adc2cf2f7d52e5fa9a350025e6265fc66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets one node color using maze coordinates.  <br /></td></tr>
+<tr class="separator:adc2cf2f7d52e5fa9a350025e6265fc66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b6f55abc0070fb2aa1dd520ae018af9" id="r_a8b6f55abc0070fb2aa1dd520ae018af9"><td class="memItemLeft" align="right" valign="top">static boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b6f55abc0070fb2aa1dd520ae018af9">resetNodeColor</a> (Maze.Node node)</td></tr>
+<tr class="memdesc:a8b6f55abc0070fb2aa1dd520ae018af9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restores one node to its default semantic color.  <br /></td></tr>
+<tr class="separator:a8b6f55abc0070fb2aa1dd520ae018af9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Renderer and UI controller for the maze application. </p>
 <p>This class owns the full Swing-driven UX flow: </p><ul>
 <li>
-Title screen presentation </li>
+Title screen mode selection (import or random generation) </li>
 <li>
-<a class="el" href="class_maze.html">Maze</a> file selection and load error reporting </li>
+<a class="el" href="class_maze.html">Maze</a> file selection or random maze creation </li>
 <li>
-<a class="el" href="class_maze.html">Maze</a> grid rendering with wall-edge visualization </li>
+<a class="el" href="class_maze.html">Maze</a> grid rendering with a paint-based renderer for all maze sizes </li>
 <li>
-Runtime solver controls (start/pause/restart, delay, instant mode) </li>
+Runtime solver controls (start/pause/restart, delay, instant mode, map load/save/generate) </li>
 <li>
 Zoom handling (buttons and Ctrl+mouse wheel) </li>
 </ul>
 <p>Typical usage is through <code><a class="el" href="#a7395a4a185478c93f106b480189c1ef9">launchFromTitleScreen()</a></code> from the app entrypoint. Example: </p><div class="fragment"><div class="line">SwingUtilities.invokeLater(<a class="code hl_function" href="#a7395a4a185478c93f106b480189c1ef9">MazeRenderer::launchFromTitleScreen</a>);</div>
-<div class="ttc" id="aclass_maze_renderer_html_a7395a4a185478c93f106b480189c1ef9"><div class="ttname"><a href="#a7395a4a185478c93f106b480189c1ef9">MazeRenderer.launchFromTitleScreen</a></div><div class="ttdeci">static void launchFromTitleScreen()</div><div class="ttdoc">Starts the renderer-driven application flow from the title screen.</div><div class="ttdef"><b>Definition</b> MazeRenderer.java:126</div></div>
+<div class="ttc" id="aclass_maze_renderer_html_a7395a4a185478c93f106b480189c1ef9"><div class="ttname"><a href="#a7395a4a185478c93f106b480189c1ef9">MazeRenderer.launchFromTitleScreen</a></div><div class="ttdeci">static void launchFromTitleScreen()</div><div class="ttdoc">Starts the renderer-driven application flow from the title screen.</div><div class="ttdef"><b>Definition</b> MazeRenderer.java:128</div></div>
+</div><!-- fragment --><p>Typical extension point for custom highlighting: </p><div class="fragment"><div class="line">Maze.Node node = maze.getStart();</div>
+<div class="line"><a class="code hl_class" href="class_maze_renderer.html">MazeRenderer</a>.<a class="code hl_function" href="#adc2cf2f7d52e5fa9a350025e6265fc66">setNodeColor</a>(node, Color.MAGENTA);</div>
+<div class="line"><a class="code hl_class" href="class_maze_renderer.html">MazeRenderer</a>.<a class="code hl_function" href="#a8b6f55abc0070fb2aa1dd520ae018af9">resetNodeColor</a>(node);</div>
+<div class="ttc" id="aclass_maze_renderer_html"><div class="ttname"><a href="class_maze_renderer.html">MazeRenderer</a></div><div class="ttdoc">Renderer and UI controller for the maze application.</div><div class="ttdef"><b>Definition</b> MazeRenderer.java:61</div></div>
+<div class="ttc" id="aclass_maze_renderer_html_a8b6f55abc0070fb2aa1dd520ae018af9"><div class="ttname"><a href="#a8b6f55abc0070fb2aa1dd520ae018af9">MazeRenderer.resetNodeColor</a></div><div class="ttdeci">static boolean resetNodeColor(Maze.Node node)</div><div class="ttdoc">Restores one node to its default semantic color.</div><div class="ttdef"><b>Definition</b> MazeRenderer.java:1076</div></div>
+<div class="ttc" id="aclass_maze_renderer_html_adc2cf2f7d52e5fa9a350025e6265fc66"><div class="ttname"><a href="#adc2cf2f7d52e5fa9a350025e6265fc66">MazeRenderer.setNodeColor</a></div><div class="ttdeci">static boolean setNodeColor(Maze.Node node, Color color)</div><div class="ttdoc">Sets one node color using maze coordinates.</div><div class="ttdef"><b>Definition</b> MazeRenderer.java:1060</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a7395a4a185478c93f106b480189c1ef9" name="a7395a4a185478c93f106b480189c1ef9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7395a4a185478c93f106b480189c1ef9">&#9670;&#160;</a></span>launchFromTitleScreen()</h2>
@@ -154,6 +166,81 @@ Zoom handling (buttons and Ctrl+mouse wheel) </li>
 
 <p>Starts the renderer-driven application flow from the title screen. </p>
 <p>This is the recommended public entrypoint for GUI startup. </p>
+
+</div>
+</div>
+<a id="a8b6f55abc0070fb2aa1dd520ae018af9" name="a8b6f55abc0070fb2aa1dd520ae018af9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b6f55abc0070fb2aa1dd520ae018af9">&#9670;&#160;</a></span>resetNodeColor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static boolean MazeRenderer.resetNodeColor </td>
+          <td>(</td>
+          <td class="paramtype">Maze.Node</td>          <td class="paramname"><span class="paramname"><em>node</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Restores one node to its default semantic color. </p>
+<p>Default semantic color rules are: start=green, goal=blue, traversable=white, blocked=dark gray.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">node</td><td>maze node to reset </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true when update was accepted </dd></dl>
+
+</div>
+</div>
+<a id="adc2cf2f7d52e5fa9a350025e6265fc66" name="adc2cf2f7d52e5fa9a350025e6265fc66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc2cf2f7d52e5fa9a350025e6265fc66">&#9670;&#160;</a></span>setNodeColor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static boolean MazeRenderer.setNodeColor </td>
+          <td>(</td>
+          <td class="paramtype">Maze.Node</td>          <td class="paramname"><span class="paramname"><em>node</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Color</td>          <td class="paramname"><span class="paramname"><em>color</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets one node color using maze coordinates. </p>
+<p>Typical usage is temporary overlays (for example hints or debug markers) on top of solver coloring.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">node</td><td>maze node to color </td></tr>
+    <tr><td class="paramname">color</td><td>target color </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true when update was accepted </dd></dl>
 
 </div>
 </div>

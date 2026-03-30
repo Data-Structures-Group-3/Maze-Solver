@@ -11,8 +11,9 @@ public class MS {
     /**
      * Starts the maze demo.
      *
-    * <p>Delegates app flow to MazeRenderer:
-    * title screen, file selection, maze loading, and interactive solve UI.
+      * <p>Delegates app flow to MazeRenderer:
+            * title screen mode selection, maze import or generation, and interactive
+            * solve UI with in-session map load/save/generate actions.
      *
      * @param args command line arguments (currently unused)
      */
