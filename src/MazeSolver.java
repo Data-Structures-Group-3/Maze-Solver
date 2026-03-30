@@ -159,7 +159,10 @@ public class MazeSolver {
      * Gets the final path after a successful solve.
      *
      * <p>The path is traced backward using the internal parent table, so the returned
-     * list begins at the goal and ends at the start.
+      * list begins at the goal and ends at the start.
+      *
+      * <p>Typical UI code can iterate as-is for reverse painting, or reverse the list
+      * first if start-to-goal order is preferred.
      *
      * @return list of path points where {@code x=col, y=row}; empty if unsolved
      */
@@ -180,7 +183,8 @@ public class MazeSolver {
     /**
      * Resets transient search state so solving can start fresh.
      *
-     * <p>This keeps the currently assigned maze and algorithm.
+      * <p>This keeps the currently assigned maze and algorithm.
+      * Typical use is after changing visualization mode or when handling a restart.
      */
     public void resetSearch() {
         frontier.clear();

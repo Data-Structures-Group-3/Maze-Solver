@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.3</span>
+   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.4</span>
    </div>
   </td>
  </tr>
@@ -161,6 +161,18 @@ Static Public Member Functions</h2></td></tr>
 <div class="line">10001</div>
 <div class="line">10101</div>
 <div class="line">11111</div>
+</div><!-- fragment --><p>Typical implementation flow: </p><div class="fragment"><div class="line"><a class="code hl_class" href="class_maze.html">Maze</a> maze = <a class="code hl_class" href="class_maze.html">Maze</a>.<a class="code hl_function" href="#a262a0c154562ed47724604c0cc46bcab">importFromFile</a>(<span class="stringliteral">&quot;src/test_346x346.txt&quot;</span>);</div>
+<div class="line">Maze.NeighborValidationResult vr = maze.<a class="code hl_function" href="#a164060b8ad4c0e102daa8aa2d23aeaa8">validateNeighborConnections</a>(25);</div>
+<div class="line"><span class="keywordflow">if</span> (!vr.isValid()) {</div>
+<div class="line">    <span class="keywordflow">for</span> (String issue : vr.getIssues()) {</div>
+<div class="line">        System.out.println(issue);</div>
+<div class="line">    }</div>
+<div class="line">}</div>
+<div class="line">maze.<a class="code hl_function" href="#ae20cb68cb5dc52cf20d04c669d0cde3e">exportToFile</a>(<span class="stringliteral">&quot;out.txt&quot;</span>);</div>
+<div class="ttc" id="aclass_maze_html"><div class="ttname"><a href="class_maze.html">Maze</a></div><div class="ttdef"><b>Definition</b> Maze.java:43</div></div>
+<div class="ttc" id="aclass_maze_html_a164060b8ad4c0e102daa8aa2d23aeaa8"><div class="ttname"><a href="#a164060b8ad4c0e102daa8aa2d23aeaa8">Maze.validateNeighborConnections</a></div><div class="ttdeci">NeighborValidationResult validateNeighborConnections(int maxIssuesToCollect)</div><div class="ttdef"><b>Definition</b> Maze.java:500</div></div>
+<div class="ttc" id="aclass_maze_html_a262a0c154562ed47724604c0cc46bcab"><div class="ttname"><a href="#a262a0c154562ed47724604c0cc46bcab">Maze.importFromFile</a></div><div class="ttdeci">static Maze importFromFile(String filePath)</div><div class="ttdef"><b>Definition</b> Maze.java:211</div></div>
+<div class="ttc" id="aclass_maze_html_ae20cb68cb5dc52cf20d04c669d0cde3e"><div class="ttname"><a href="#ae20cb68cb5dc52cf20d04c669d0cde3e">Maze.exportToFile</a></div><div class="ttdeci">void exportToFile(String filePath)</div><div class="ttdef"><b>Definition</b> Maze.java:274</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a64794a0b1cbed9d04736002da7ee62cb" name="a64794a0b1cbed9d04736002da7ee62cb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a64794a0b1cbed9d04736002da7ee62cb">&#9670;&#160;</a></span>Maze()</h2>

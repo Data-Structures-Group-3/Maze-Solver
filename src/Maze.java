@@ -27,6 +27,18 @@ import java.util.List;
  * 10101
  * 11111
  * @endcode
+ *
+ * <p>Typical implementation flow:
+ * @code
+ * Maze maze = Maze.importFromFile("src/test_346x346.txt");
+ * Maze.NeighborValidationResult vr = maze.validateNeighborConnections(25);
+ * if (!vr.isValid()) {
+ *     for (String issue : vr.getIssues()) {
+ *         System.out.println(issue);
+ *     }
+ * }
+ * maze.exportToFile("out.txt");
+ * @endcode
  */
 public class Maze {
 
