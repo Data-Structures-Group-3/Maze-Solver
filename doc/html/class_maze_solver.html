@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.3</span>
+   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.5</span>
    </div>
   </td>
  </tr>
@@ -143,7 +143,7 @@ Public Member Functions</h2></td></tr>
 <div class="line">    List&lt;Point&gt; path = solver.<a class="code hl_function" href="#a188a2b6d5e8776a4b0715ab74990d71b">getFinalPath</a>();</div>
 <div class="line">}</div>
 <div class="ttc" id="aclass_maze_solver_html"><div class="ttname"><a href="class_maze_solver.html">MazeSolver</a></div><div class="ttdef"><b>Definition</b> MazeSolver.java:28</div></div>
-<div class="ttc" id="aclass_maze_solver_html_a188a2b6d5e8776a4b0715ab74990d71b"><div class="ttname"><a href="#a188a2b6d5e8776a4b0715ab74990d71b">MazeSolver.getFinalPath</a></div><div class="ttdeci">List&lt; Point &gt; getFinalPath()</div><div class="ttdef"><b>Definition</b> MazeSolver.java:166</div></div>
+<div class="ttc" id="aclass_maze_solver_html_a188a2b6d5e8776a4b0715ab74990d71b"><div class="ttname"><a href="#a188a2b6d5e8776a4b0715ab74990d71b">MazeSolver.getFinalPath</a></div><div class="ttdeci">List&lt; Point &gt; getFinalPath()</div><div class="ttdef"><b>Definition</b> MazeSolver.java:169</div></div>
 <div class="ttc" id="aclass_maze_solver_html_a19e7e09b1cf169d44927f2fbb1a4a9f9"><div class="ttname"><a href="#a19e7e09b1cf169d44927f2fbb1a4a9f9">MazeSolver.setMaze</a></div><div class="ttdeci">void setMaze(Maze maze)</div><div class="ttdef"><b>Definition</b> MazeSolver.java:100</div></div>
 <div class="ttc" id="aclass_maze_solver_html_a1e2cd30b080991b73b0d717e1862b74d"><div class="ttname"><a href="#a1e2cd30b080991b73b0d717e1862b74d">MazeSolver.isFinished</a></div><div class="ttdeci">boolean isFinished()</div><div class="ttdef"><b>Definition</b> MazeSolver.java:135</div></div>
 <div class="ttc" id="aclass_maze_solver_html_a4731d9d114db6ed8934c1bb5b5153355"><div class="ttname"><a href="#a4731d9d114db6ed8934c1bb5b5153355">MazeSolver.updateSolve</a></div><div class="ttdeci">Maze.Node updateSolve()</div><div class="ttdef"><b>Definition</b> MazeSolver.java:111</div></div>
@@ -185,6 +185,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Gets the final path after a successful solve.</p>
 <p>The path is traced backward using the internal parent table, so the returned list begins at the goal and ends at the start.</p>
+<p>Typical UI code can iterate as-is for reverse painting, or reverse the list first if start-to-goal order is preferred.</p>
 <dl class="section return"><dt>Returns</dt><dd>list of path points where <code class="JavaDocCode">x=col, y=row</code>; empty if unsolved </dd></dl>
 
 </div>
@@ -261,7 +262,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Resets transient search state so solving can start fresh.</p>
-<p>This keeps the currently assigned maze and algorithm. </p>
+<p>This keeps the currently assigned maze and algorithm. Typical use is after changing visualization mode or when handling a restart. </p>
 
 </div>
 </div>

@@ -1,17 +1,14 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -33,20 +30,18 @@ import javax.swing.JSpinner;
 import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.border.AbstractBorder;
 
 /**
  * @brief Renderer and UI controller for the maze application.
  *
  * <p>This class owns the full Swing-driven UX flow:
  * <ul>
- *   <li>Title screen presentation</li>
- *   <li>Maze file selection and load error reporting</li>
- *   <li>Maze grid rendering with wall-edge visualization</li>
- *   <li>Runtime solver controls (start/pause/restart, delay, instant mode)</li>
+ *   <li>Title screen mode selection (import or random generation)</li>
+ *   <li>Maze file selection or random maze creation</li>
+ *   <li>Maze grid rendering with a paint-based renderer for all maze sizes</li>
+ *   <li>Runtime solver controls (start/pause/restart, delay, instant mode, map load/save/generate)</li>
  *   <li>Zoom handling (buttons and Ctrl+mouse wheel)</li>
  * </ul>
  *
@@ -54,6 +49,13 @@ import javax.swing.border.AbstractBorder;
  * Example:
  * @code
  * SwingUtilities.invokeLater(MazeRenderer::launchFromTitleScreen);
+ * @endcode
+ *
+ * <p>Typical extension point for custom highlighting:
+ * @code
+ * Maze.Node node = maze.getStart();
+ * MazeRenderer.setNodeColor(node, Color.MAGENTA);
+ * MazeRenderer.resetNodeColor(node);
  * @endcode
  */
 public final class MazeRenderer {
@@ -72,7 +74,7 @@ public final class MazeRenderer {
     private static final Color GOAL_CELL_COLOR = Color.BLUE;
     private static final Color BLOCKED_CELL_COLOR = Color.DARK_GRAY;
     private static final Color OPEN_CELL_COLOR = Color.WHITE;
-    private static final Color PASSABLE_EDGE_COLOR = new Color(0xF9E8D6);
+    private static final Color GRID_LINE_COLOR = new Color(0, 0, 0, 55);
 
     private static final int MIN_CELL_SIZE_PX = 6;
     private static final int MAX_CELL_SIZE_PX = 60;
@@ -86,7 +88,7 @@ public final class MazeRenderer {
     private static JFrame mazeFrame;
 
     private static Maze renderedMaze;
-    private static JLabel[][] renderedCells;
+    private static Color[][] renderedCellColors;
     private static JPanel renderedGridPanel;
     private static JScrollPane renderedGridScrollPane;
 
@@ -124,7 +126,7 @@ public final class MazeRenderer {
      * <p>This is the recommended public entrypoint for GUI startup.
      */
     public static void launchFromTitleScreen() {
-        showTitleScreen(MazeRenderer::promptForMazeAndRun);
+        showTitleScreen();
     }
 
     // ---------------------------------------------------------------------
@@ -132,11 +134,9 @@ public final class MazeRenderer {
     // ---------------------------------------------------------------------
 
     /**
-     * @brief Displays the title screen and invokes a callback on Start.
-     *
-     * @param onStartGame callback executed when the Start button is pressed
+     * @brief Displays the title screen and allows import or random generation.
      */
-    private static void showTitleScreen(Runnable onStartGame) {
+    private static void showTitleScreen() {
         if (titleFrame != null) {
             titleFrame.dispose();
         }
@@ -149,23 +149,33 @@ public final class MazeRenderer {
         JPanel mainPanel = new BackgroundImagePanel(TITLE_SCREEN_IMAGE_PATH);
         mainPanel.setLayout(new GridBagLayout());
 
-        JButton startButton = new JButton("START MAZE");
-        styleTitleButton(startButton);
-        startButton.addActionListener(e -> {
+        JButton importButton = new JButton("IMPORT MAZE");
+        styleTitleButton(importButton);
+        importButton.addActionListener(e -> {
             titleFrame.dispose();
             titleFrame = null;
-            if (onStartGame != null) {
-                onStartGame.run();
-            }
+            promptForMazeAndRun();
+        });
+
+        JButton generateButton = new JButton("GENERATE RANDOM");
+        styleTitleButton(generateButton);
+        generateButton.addActionListener(e -> {
+            titleFrame.dispose();
+            titleFrame = null;
+            promptForRandomMazeAndRun();
         });
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(300, 0, 0, 0);
+        gbc.insets = new Insets(270, 0, 12, 0);
 
-        mainPanel.add(startButton, gbc);
+        mainPanel.add(importButton, gbc);
+
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        mainPanel.add(generateButton, gbc);
         titleFrame.add(mainPanel);
         titleFrame.setVisible(true);
     }
@@ -185,22 +195,12 @@ public final class MazeRenderer {
         try {
             String inputFile = chooseMazeFile();
             if (inputFile == null) {
-                showTitleScreen(MazeRenderer::promptForMazeAndRun);
+                showTitleScreen();
                 return;
             }
 
             Maze maze = Maze.importFromFile(inputFile);
-            printMaze(maze);
-            validateMazeNeighbors(maze);
-            if (DEFAULT_SHOW_NEIGHBORS) {
-                printNeighborTable(maze);
-            }
-
-            runInteractiveSolveSession(
-                    maze,
-                    DEFAULT_SESSION_ALGORITHM,
-                    DEFAULT_SESSION_STEP_DELAY_MS,
-                    DEFAULT_VISITED_COLOR);
+            launchMazeSession(maze, DEFAULT_SESSION_ALGORITHM, DEFAULT_SESSION_STEP_DELAY_MS);
         } catch (Exception ex) {
             System.err.println("Failed to load or print maze: " + ex.getMessage());
             ex.printStackTrace();
@@ -209,8 +209,94 @@ public final class MazeRenderer {
                     "Failed to load maze: " + ex.getMessage(),
                     "Maze Load Error",
                     JOptionPane.ERROR_MESSAGE);
-            showTitleScreen(MazeRenderer::promptForMazeAndRun);
+            showTitleScreen();
         }
+    }
+
+    /**
+     * @brief Prompts for dimensions, generates a random maze, and starts a session.
+     */
+    private static void promptForRandomMazeAndRun() {
+        int[] dimensions = promptForRandomMazeDimensions();
+        if (dimensions == null) {
+            showTitleScreen();
+            return;
+        }
+
+        try {
+            Maze maze = Maze.generateRandomMaze(dimensions[0], dimensions[1]);
+            launchMazeSession(maze, DEFAULT_SESSION_ALGORITHM, DEFAULT_SESSION_STEP_DELAY_MS);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Failed to generate random maze: " + ex.getMessage(),
+                    "Maze Generation Error",
+                    JOptionPane.ERROR_MESSAGE);
+            showTitleScreen();
+        }
+    }
+
+    /**
+     * @brief Prompts for random maze dimensions.
+     *
+     * @return two-element array [rows, cols], or null when canceled
+     */
+    private static int[] promptForRandomMazeDimensions() {
+        JSpinner rowSpinner = new JSpinner(new SpinnerNumberModel(60, 3, 5000, 1));
+        JSpinner colSpinner = new JSpinner(new SpinnerNumberModel(60, 3, 5000, 1));
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(4, 4, 4, 4);
+        gbc.anchor = GridBagConstraints.WEST;
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Rows:"), gbc);
+        gbc.gridx = 1;
+        panel.add(rowSpinner, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(new JLabel("Columns:"), gbc);
+        gbc.gridx = 1;
+        panel.add(colSpinner, gbc);
+
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                panel,
+                "Generate Random Maze",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+
+        if (result != JOptionPane.OK_OPTION) {
+            return null;
+        }
+
+        int rows = ((Number) rowSpinner.getValue()).intValue();
+        int cols = ((Number) colSpinner.getValue()).intValue();
+        return new int[] { rows, cols };
+    }
+
+    /**
+     * @brief Prints diagnostics and launches an interactive maze session.
+     *
+     * @param maze maze instance to run
+     * @param initialAlgorithm default algorithm label
+     * @param initialStepDelayMs default step delay
+     */
+    private static void launchMazeSession(Maze maze, String initialAlgorithm, int initialStepDelayMs) {
+        printMaze(maze);
+        validateMazeNeighbors(maze);
+        if (DEFAULT_SHOW_NEIGHBORS) {
+            printNeighborTable(maze);
+        }
+
+        runInteractiveSolveSession(
+                maze,
+                initialAlgorithm,
+                initialStepDelayMs,
+                DEFAULT_VISITED_COLOR);
     }
 
     /**
@@ -234,9 +320,9 @@ public final class MazeRenderer {
     }
 
     /**
-     * @brief Applies the visual style used by the title Start button.
+     * @brief Applies the visual style used by title-screen action buttons.
      *
-     * @param button title Start button
+     * @param button title action button
      */
     private static void styleTitleButton(JButton button) {
         button.setPreferredSize(new Dimension(200, 60));
@@ -291,16 +377,17 @@ public final class MazeRenderer {
 
     /**
      * @brief Handles one timer tick of incremental solving.
-      *
-      * <p>Each tick performs exactly one call to {@link MazeSolver#updateSolve()} and
-      * then updates UI state based on the returned node and terminal solver status.
+         *
+         * <p>Each tick performs exactly one call to {@link MazeSolver#updateSolve()} and
+         * then updates UI state based on the returned node and terminal solver status.
+         * When solved, the final path is colored and start/goal semantic colors are restored.
      */
     private static void onSolveTick() {
         syncTimerDelayWithUi();
 
         Maze.Node visited = solver.updateSolve();
         if (visited != null && visited != renderedMaze.getGoal() && visited != renderedMaze.getStart()) {
-            setCellColor(visited.row, visited.col, sessionVisitedColor);
+            setNodeColor(visited, sessionVisitedColor);
             traversedTiles++;
             setTraversedCount(traversedTiles);
         }
@@ -313,6 +400,8 @@ public final class MazeRenderer {
         refreshRuntimeControlState();
         if (solver.isSolved()) {
             setCellColors(solver.getFinalPath(), Color.CYAN);
+            resetNodeColor(renderedMaze.getStart());
+            resetNodeColor(renderedMaze.getGoal());
             System.out.println("Solve result: goal reached using " + solver.getAlg()
                     + " after visiting " + solver.getVisitedCount() + " node(s).");
             return;
@@ -385,9 +474,10 @@ public final class MazeRenderer {
      * @brief Runs solve loop to completion without per-step UI updates.
      *
      * <p>The display is updated only when solving has finished, either with a final path
-      * (solved) or with an unsolved result. During this run, mode toggling is disabled
-      * via {@link #refreshRuntimeControlState()}. Traversed-cell coloring and traversed
-      * count semantics match timer mode (start/goal excluded).
+         * (solved) or with an unsolved result. During this run, mode toggling is disabled
+         * via {@link #refreshRuntimeControlState()}. Traversed-cell coloring and traversed
+         * count semantics match timer mode (start/goal excluded), including restoration
+         * of start/goal colors after final path painting.
      */
     private static void runInstantSolve() {
         if (solver == null || solvingInstantly || !isInstantSolveSelected()) {
@@ -417,6 +507,8 @@ public final class MazeRenderer {
 
                 if (solved && finalPath != null) {
                     setCellColors(finalPath, Color.CYAN);
+                    resetNodeColor(renderedMaze.getStart());
+                    resetNodeColor(renderedMaze.getGoal());
                     System.out.println("Solve result: goal reached using " + solver.getAlg()
                             + " after visiting " + solver.getVisitedCount() + " node(s).");
                 } else {
@@ -470,10 +562,9 @@ public final class MazeRenderer {
         }
 
         renderedMaze = maze;
-        renderedCells = new JLabel[rows][cols];
-
-        renderedGridPanel = new JPanel(new GridLayout(rows, cols));
-        buildGridCells(rows, cols);
+        renderedCellColors = new Color[rows][cols];
+        initializePaintedCellColors(rows, cols);
+        renderedGridPanel = createPaintedGridPanel(rows, cols);
 
         JPanel controlPanel = buildControlPanel();
 
@@ -507,25 +598,94 @@ public final class MazeRenderer {
     }
 
     /**
-     * @brief Creates all maze cell labels and applies initial styling.
+     * @brief Initializes backing colors for paint-render mode.
      *
      * @param rows maze row count
      * @param cols maze column count
      */
-    private static void buildGridCells(int rows, int cols) {
+    private static void initializePaintedCellColors(int rows, int cols) {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                JLabel cell = new JLabel();
-                cell.setOpaque(true);
-                cell.setPreferredSize(new Dimension(cellSizePx, cellSizePx));
-
-                applyDefaultCellAppearance(cell, renderedMaze, row, col);
-                applyCellBorder(cell, row, col, rows, cols);
-
-                renderedCells[row][col] = cell;
-                renderedGridPanel.add(cell);
+                renderedCellColors[row][col] = getDefaultCellColor(renderedMaze, row, col);
             }
         }
+    }
+
+     /**
+      * @brief Creates the paint-based maze grid panel.
+      *
+      * <p>This renderer is used for all maze sizes. It avoids one Swing component per
+      * cell, paints only the visible viewport region, and overlays subtle gridlines.
+     *
+     * @param rows maze row count
+     * @param cols maze column count
+     * @return configured paint panel
+     */
+    private static JPanel createPaintedGridPanel(int rows, int cols) {
+        JPanel panel = new JPanel() {
+            /**
+             * @brief Paints only the visible maze viewport region.
+             *
+             * <p>Cell colors come from the renderer cache and gridlines are overlaid
+             * for node separation. Start/goal labels are drawn when zoom is large enough.
+             *
+             * @param graphics paint context provided by Swing
+             */
+            @Override
+            protected void paintComponent(Graphics graphics) {
+                super.paintComponent(graphics);
+                if (renderedMaze == null || renderedCellColors == null) {
+                    return;
+                }
+
+                Rectangle clip = graphics.getClipBounds();
+                int startRow = Math.max(0, clip.y / cellSizePx);
+                int endRow = Math.min(renderedMaze.getLength() - 1, (clip.y + clip.height) / cellSizePx + 1);
+                int startCol = Math.max(0, clip.x / cellSizePx);
+                int endCol = Math.min(renderedMaze.getWidth() - 1, (clip.x + clip.width) / cellSizePx + 1);
+
+                Maze.Node start = renderedMaze.getStart();
+                Maze.Node goal = renderedMaze.getGoal();
+
+                for (int row = startRow; row <= endRow; row++) {
+                    for (int col = startCol; col <= endCol; col++) {
+                        Color color = renderedCellColors[row][col];
+                        graphics.setColor(color != null ? color : BLOCKED_CELL_COLOR);
+
+                        int x = col * cellSizePx;
+                        int y = row * cellSizePx;
+                        graphics.fillRect(x, y, cellSizePx, cellSizePx);
+
+                        if (cellSizePx >= 14 && start != null && start.row == row && start.col == col) {
+                            graphics.setColor(Color.BLACK);
+                            graphics.drawString("S", x + (cellSizePx / 3), y + (2 * cellSizePx / 3));
+                        } else if (cellSizePx >= 14 && goal != null && goal.row == row && goal.col == col) {
+                            graphics.setColor(Color.BLACK);
+                            graphics.drawString("G", x + (cellSizePx / 3), y + (2 * cellSizePx / 3));
+                        }
+                    }
+                }
+
+                // Draw subtle grid lines so individual nodes are easier to identify.
+                graphics.setColor(GRID_LINE_COLOR);
+                int minX = startCol * cellSizePx;
+                int maxX = (endCol + 1) * cellSizePx;
+                int minY = startRow * cellSizePx;
+                int maxY = (endRow + 1) * cellSizePx;
+
+                for (int row = startRow; row <= endRow + 1; row++) {
+                    int y = row * cellSizePx;
+                    graphics.drawLine(minX, y, maxX, y);
+                }
+                for (int col = startCol; col <= endCol + 1; col++) {
+                    int x = col * cellSizePx;
+                    graphics.drawLine(x, minY, x, maxY);
+                }
+            }
+        };
+
+        panel.setPreferredSize(new Dimension(cols * cellSizePx, rows * cellSizePx));
+        return panel;
     }
 
     /**
@@ -536,6 +696,9 @@ public final class MazeRenderer {
          *   <li><b>Start</b>: begin or continue stepping</li>
          *   <li><b>Pause</b>: stop timer without resetting search</li>
          *   <li><b>Restart</b>: reset search and recolor cells</li>
+         *   <li><b>Load Map</b>: replace current session maze from file</li>
+         *   <li><b>Save Map</b>: export current session maze to file</li>
+         *   <li><b>Generate Map</b>: replace current session maze with a new random map</li>
          *   <li><b>Step Delay</b>: 1..5000 ms for timer-driven solving</li>
          *   <li><b>Instant</b>: solve to completion with timer-mode-equivalent final output</li>
          *   <li><b>Zoom +/-</b>: adjust cell size in fixed increments</li>
@@ -549,6 +712,9 @@ public final class MazeRenderer {
         JButton startButton = new JButton("Start");
         JButton pauseButton = new JButton("Pause");
         JButton restartButton = new JButton("Restart");
+        JButton loadMapButton = new JButton("Load Map");
+        JButton saveMapButton = new JButton("Save Map");
+        JButton generateMapButton = new JButton("Generate Map");
         JButton zoomOutButton = new JButton("-");
         JButton zoomInButton = new JButton("+");
 
@@ -580,12 +746,18 @@ public final class MazeRenderer {
             refreshRuntimeControlState();
         });
         restartButton.addActionListener(e -> handleRestartRequested());
+        loadMapButton.addActionListener(e -> handleLoadMapRequested());
+        saveMapButton.addActionListener(e -> handleSaveMapRequested());
+        generateMapButton.addActionListener(e -> handleGenerateMapRequested());
         zoomOutButton.addActionListener(e -> adjustZoom(-1));
         zoomInButton.addActionListener(e -> adjustZoom(1));
 
         controlPanel.add(startButton);
         controlPanel.add(pauseButton);
         controlPanel.add(restartButton);
+        controlPanel.add(loadMapButton);
+        controlPanel.add(saveMapButton);
+        controlPanel.add(generateMapButton);
         controlPanel.add(algorithmLabel);
         controlPanel.add(algorithmSelector);
         controlPanel.add(delayLabel);
@@ -600,6 +772,102 @@ public final class MazeRenderer {
         refreshRuntimeControlState();
 
         return controlPanel;
+    }
+
+    /**
+     * @brief Loads a different maze file and restarts the session with it.
+     */
+    private static void handleLoadMapRequested() {
+        String inputFile = chooseMazeFile();
+        if (inputFile == null) {
+            return;
+        }
+
+        String selectedAlgorithm = getSelectedAlgorithmLabel();
+        int selectedDelay = getSelectedStepDelayMsValue();
+
+        try {
+            Maze maze = Maze.importFromFile(inputFile);
+            launchMazeSession(maze, selectedAlgorithm, selectedDelay);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    mazeFrame,
+                    "Failed to load maze: " + ex.getMessage(),
+                    "Maze Load Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * @brief Saves the currently loaded maze to a text file.
+     */
+    private static void handleSaveMapRequested() {
+        if (renderedMaze == null) {
+            return;
+        }
+
+        String outputFile = chooseSaveMazeFile();
+        if (outputFile == null) {
+            return;
+        }
+
+        try {
+            renderedMaze.exportToFile(outputFile);
+            JOptionPane.showMessageDialog(
+                    mazeFrame,
+                    "Maze saved to:\n" + outputFile,
+                    "Maze Saved",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    mazeFrame,
+                    "Failed to save maze: " + ex.getMessage(),
+                    "Save Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * @brief Generates a new random maze and restarts the session with it.
+     */
+    private static void handleGenerateMapRequested() {
+        int[] dimensions = promptForRandomMazeDimensions();
+        if (dimensions == null) {
+            return;
+        }
+
+        String selectedAlgorithm = getSelectedAlgorithmLabel();
+        int selectedDelay = getSelectedStepDelayMsValue();
+
+        try {
+            Maze maze = Maze.generateRandomMaze(dimensions[0], dimensions[1]);
+            launchMazeSession(maze, selectedAlgorithm, selectedDelay);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    mazeFrame,
+                    "Failed to generate maze: " + ex.getMessage(),
+                    "Maze Generation Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * @brief Prompts for destination path when saving a maze file.
+     *
+     * @return selected absolute file path, or null when canceled
+     */
+    private static String chooseSaveMazeFile() {
+        FileDialog saveDialog = new FileDialog((Frame) null, "Save Maze File", FileDialog.SAVE);
+        saveDialog.setDirectory(".");
+        saveDialog.setFile("maze.txt");
+        saveDialog.setVisible(true);
+
+        String fileName = saveDialog.getFile();
+        String directory = saveDialog.getDirectory();
+        if (fileName == null) {
+            return null;
+        }
+        return directory + fileName;
     }
 
     /**
@@ -628,52 +896,6 @@ public final class MazeRenderer {
         mazeFrame.setLocation(
             maxWindowBounds.x + (maxWindowBounds.width - clampedWidth) / 2,
             maxWindowBounds.y + (maxWindowBounds.height - clampedHeight) / 2);
-    }
-
-    /**
-     * @brief Applies edge border colors based on connectivity and boundaries.
-     *
-     * @param cell target cell label
-     * @param row cell row
-     * @param col cell column
-     * @param rows total row count
-     * @param cols total column count
-     */
-    private static void applyCellBorder(JLabel cell, int row, int col, int rows, int cols) {
-        Maze.Node node = renderedMaze.getNode(row, col);
-
-        Color topColor = PASSABLE_EDGE_COLOR;
-        Color rightColor = PASSABLE_EDGE_COLOR;
-        Color bottomColor = PASSABLE_EDGE_COLOR;
-        Color leftColor = PASSABLE_EDGE_COLOR;
-        int thickness = 1;
-
-        if (node == null) {
-            topColor = rightColor = bottomColor = leftColor = Color.BLACK;
-        } else {
-            if (row == 0 || node.getNeighbor(Maze.Dir.NORTH) == null) {
-                topColor = Color.BLACK;
-            }
-            if (row == rows - 1 || node.getNeighbor(Maze.Dir.SOUTH) == null) {
-                bottomColor = Color.BLACK;
-            }
-            if (col == 0 || node.getNeighbor(Maze.Dir.WEST) == null) {
-                leftColor = Color.BLACK;
-            }
-            if (col == cols - 1 || node.getNeighbor(Maze.Dir.EAST) == null) {
-                rightColor = Color.BLACK;
-            }
-        }
-
-        cell.setBorder(new MazeEdgeBorder(
-                thickness,
-                thickness,
-                thickness,
-                thickness,
-                topColor,
-                leftColor,
-                bottomColor,
-                rightColor));
     }
 
     // ---------------------------------------------------------------------
@@ -826,6 +1048,39 @@ public final class MazeRenderer {
     }
 
     /**
+     * @brief Sets one node color using maze coordinates.
+      *
+      * <p>Typical usage is temporary overlays (for example hints or debug markers)
+      * on top of solver coloring.
+     *
+     * @param node maze node to color
+     * @param color target color
+     * @return true when update was accepted
+     */
+    public static boolean setNodeColor(Maze.Node node, Color color) {
+        if (node == null) {
+            return false;
+        }
+        return setCellColor(node.row, node.col, color);
+    }
+
+    /**
+     * @brief Restores one node to its default semantic color.
+      *
+      * <p>Default semantic color rules are: start=green, goal=blue,
+      * traversable=white, blocked=dark gray.
+     *
+     * @param node maze node to reset
+     * @return true when update was accepted
+     */
+    public static boolean resetNodeColor(Maze.Node node) {
+        if (node == null || renderedMaze == null) {
+            return false;
+        }
+        return setCellColor(node.row, node.col, getDefaultCellColor(renderedMaze, node.row, node.col));
+    }
+
+    /**
      * @brief Sets one rendered cell color.
      *
      * @param row row index
@@ -838,14 +1093,13 @@ public final class MazeRenderer {
             return false;
         }
 
-        JLabel cell = renderedCells[row][col];
-        if (cell == null) {
-            return false;
-        }
-
         SwingUtilities.invokeLater(() -> {
-            cell.setBackground(color);
-            cell.repaint();
+            renderedCellColors[row][col] = color;
+            if (renderedGridPanel != null) {
+                int x = col * cellSizePx;
+                int y = row * cellSizePx;
+                renderedGridPanel.repaint(x, y, cellSizePx, cellSizePx);
+            }
         });
         return true;
     }
@@ -864,13 +1118,15 @@ public final class MazeRenderer {
 
         int updated = 0;
         for (Point point : cells) {
-            if (point == null) {
+            if (point == null || !renderedMaze.isInBounds(point.y, point.x)) {
                 continue;
             }
+            renderedCellColors[point.y][point.x] = color;
+            updated++;
+        }
 
-            if (setCellColor(point.y, point.x, color)) {
-                updated++;
-            }
+        if (updated > 0 && renderedGridPanel != null) {
+            renderedGridPanel.repaint();
         }
         return updated;
     }
@@ -886,11 +1142,11 @@ public final class MazeRenderer {
         SwingUtilities.invokeLater(() -> {
             for (int row = 0; row < renderedMaze.getLength(); row++) {
                 for (int col = 0; col < renderedMaze.getWidth(); col++) {
-                    JLabel cell = renderedCells[row][col];
-                    if (cell != null) {
-                        applyDefaultCellAppearance(cell, renderedMaze, row, col);
-                    }
+                    renderedCellColors[row][col] = getDefaultCellColor(renderedMaze, row, col);
                 }
+            }
+            if (renderedGridPanel != null) {
+                renderedGridPanel.repaint();
             }
             if (mazeFrame != null) {
                 mazeFrame.repaint();
@@ -899,33 +1155,28 @@ public final class MazeRenderer {
     }
 
     /**
-     * @brief Applies default cell appearance from maze semantics.
+     * @brief Resolves the default color for a maze cell by semantic role.
      *
-     * @param cell target label
      * @param maze source maze
      * @param row row index
      * @param col column index
+     * @return default cell color
      */
-    private static void applyDefaultCellAppearance(JLabel cell, Maze maze, int row, int col) {
+    private static Color getDefaultCellColor(Maze maze, int row, int col) {
         Maze.Node start = maze.getStart();
         Maze.Node goal = maze.getGoal();
         Maze.Node node = maze.getNode(row, col);
 
         if (start != null && start.row == row && start.col == col) {
-            cell.setBackground(START_CELL_COLOR);
-            cell.setText("S");
-            cell.setHorizontalAlignment(SwingConstants.CENTER);
-        } else if (goal != null && goal.row == row && goal.col == col) {
-            cell.setBackground(GOAL_CELL_COLOR);
-            cell.setText("G");
-            cell.setHorizontalAlignment(SwingConstants.CENTER);
-        } else if (!maze.isOccupied(row, col) || node == null) {
-            cell.setBackground(BLOCKED_CELL_COLOR);
-            cell.setText("");
-        } else {
-            cell.setBackground(OPEN_CELL_COLOR);
-            cell.setText("");
+            return START_CELL_COLOR;
         }
+        if (goal != null && goal.row == row && goal.col == col) {
+            return GOAL_CELL_COLOR;
+        }
+        if (!maze.isOccupied(row, col) || node == null) {
+            return BLOCKED_CELL_COLOR;
+        }
+        return OPEN_CELL_COLOR;
     }
 
     /**
@@ -934,7 +1185,7 @@ public final class MazeRenderer {
      * @return true when maze and cell grid exist
      */
     private static boolean isRendererReady() {
-        return renderedMaze != null && renderedCells != null;
+        return renderedMaze != null && renderedCellColors != null;
     }
 
     // ---------------------------------------------------------------------
@@ -980,15 +1231,8 @@ public final class MazeRenderer {
         double oldCenterX = oldViewRect.getCenterX();
         double oldCenterY = oldViewRect.getCenterY();
 
-        Dimension newCellSize = new Dimension(cellSizePx, cellSizePx);
-        for (int row = 0; row < renderedMaze.getLength(); row++) {
-            for (int col = 0; col < renderedMaze.getWidth(); col++) {
-                JLabel cell = renderedCells[row][col];
-                if (cell != null) {
-                    cell.setPreferredSize(newCellSize);
-                }
-            }
-        }
+        renderedGridPanel.setPreferredSize(
+                new Dimension(renderedMaze.getWidth() * cellSizePx, renderedMaze.getLength() * cellSizePx));
 
         renderedGridPanel.revalidate();
         renderedGridPanel.repaint();
@@ -1090,90 +1334,6 @@ public final class MazeRenderer {
     // ---------------------------------------------------------------------
     // Internal UI support classes
     // ---------------------------------------------------------------------
-
-    /**
-     * @brief Border implementation with independently colored sides.
-     */
-    private static class MazeEdgeBorder extends AbstractBorder {
-        private final int top;
-        private final int left;
-        private final int bottom;
-        private final int right;
-        private final Color topColor;
-        private final Color leftColor;
-        private final Color bottomColor;
-        private final Color rightColor;
-
-        /**
-         * @brief Creates a border with per-side thickness and color.
-         *
-         * @param top top edge thickness in pixels
-         * @param left left edge thickness in pixels
-         * @param bottom bottom edge thickness in pixels
-         * @param right right edge thickness in pixels
-         * @param topColor top edge color
-         * @param leftColor left edge color
-         * @param bottomColor bottom edge color
-         * @param rightColor right edge color
-         */
-        MazeEdgeBorder(
-                int top,
-                int left,
-                int bottom,
-                int right,
-                Color topColor,
-                Color leftColor,
-                Color bottomColor,
-                Color rightColor) {
-            this.top = top;
-            this.left = left;
-            this.bottom = bottom;
-            this.right = right;
-            this.topColor = topColor;
-            this.leftColor = leftColor;
-            this.bottomColor = bottomColor;
-            this.rightColor = rightColor;
-        }
-
-        /**
-         * @brief Returns insets matching side thickness values.
-         *
-         * @param component component using this border
-         * @return border insets
-         */
-        @Override
-        public Insets getBorderInsets(Component component) {
-            return new Insets(top, left, bottom, right);
-        }
-
-        /**
-         * @brief Paints all border edges with their configured colors.
-         */
-        @Override
-        public void paintBorder(Component component, Graphics graphics, int x, int y, int width, int height) {
-            Graphics2D g2 = (Graphics2D) graphics.create();
-            try {
-                if (top > 0) {
-                    g2.setColor(topColor);
-                    g2.fillRect(x, y, width, top);
-                }
-                if (left > 0) {
-                    g2.setColor(leftColor);
-                    g2.fillRect(x, y, left, height);
-                }
-                if (bottom > 0) {
-                    g2.setColor(bottomColor);
-                    g2.fillRect(x, y + height - bottom, width, bottom);
-                }
-                if (right > 0) {
-                    g2.setColor(rightColor);
-                    g2.fillRect(x + width - right, y, right, height);
-                }
-            } finally {
-                g2.dispose();
-            }
-        }
-    }
 
     /**
      * @brief JPanel that paints a stretched background image.
