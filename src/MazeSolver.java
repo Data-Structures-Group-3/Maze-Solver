@@ -1,6 +1,8 @@
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import java.util.PriorityQueue;
+import java.awt.Point;
 
 /**
  * Incremental maze solver that supports DFS, BFS, and A*.
@@ -29,6 +31,7 @@ public class MazeSolver {
     private boolean finished;
     private boolean solved;
     private int visitedCount;
+    private Maze.Node[][] parent;
 
     // DFS/BFS state
     private final Deque<Maze.Node> frontier = new ArrayDeque<>();
@@ -139,6 +142,26 @@ public class MazeSolver {
         return visitedCount;
     }
 
+    
+    /**
+     * Gets the final path when
+     * 
+     * @return A list containing pointers through the final path starting from the end
+     */
+    public List<Point> getFinalPath() {
+        List<Point> path = new java.util.ArrayList<>();
+        if (parent == null || !solved) {
+            return path;
+        }
+        Maze.Node curr = maze.getGoal();
+        // Trace back using the parent map
+        while (curr != null) {
+            path.add(new Point(curr.col, curr.row));
+            curr = parent[curr.row][curr.col];
+        }
+        return path;
+    }
+
     /**
      * Resets transient search state so solving can start fresh.
      *
@@ -147,6 +170,7 @@ public class MazeSolver {
     public void resetSearch() {
         frontier.clear();
         aStarFrontier.clear();
+        parent = null;
         discovered = null;
         gScore = null;
         closed = null;
@@ -190,9 +214,11 @@ public class MazeSolver {
 
     /**
      * Initializes DFS/BFS state by seeding the frontier with the start node.
+     * Additionlly it creates a parent table used for the final path
      */
     private void initializeUninformedSearch() {
         discovered = new boolean[maze.getLength()][maze.getWidth()];
+        parent = new Maze.Node[maze.getLength()][maze.getWidth()];
         Maze.Node start = maze.getStart();
         discovered[start.row][start.col] = true;
         frontier.addLast(start);
@@ -256,6 +282,7 @@ public class MazeSolver {
 
     /**
      * Enqueues all currently undiscovered neighbors of a node.
+     * Sets the parent of all potential nodes to the current node
      *
      * @param current node whose neighbor links are inspected
      */
@@ -268,6 +295,7 @@ public class MazeSolver {
 
             if (!discovered[neighbor.row][neighbor.col]) {
                 discovered[neighbor.row][neighbor.col] = true;
+                parent[neighbor.row][neighbor.col] = current;
                 frontier.addLast(neighbor);
             }
         }
@@ -281,6 +309,7 @@ public class MazeSolver {
         int cols = maze.getWidth();
         gScore = new int[rows][cols];
         closed = new boolean[rows][cols];
+        parent = new Maze.Node[rows][cols];
 
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
@@ -370,6 +399,9 @@ public class MazeSolver {
                 int tentativeG = gScore[current.row][current.col] + 1;
                 if (tentativeG < gScore[neighbor.row][neighbor.col]) {
                     gScore[neighbor.row][neighbor.col] = tentativeG;
+
+                    parent[neighbor.row][neighbor.col] = current;
+
                     int h = heuristic(neighbor, maze.getGoal());
                     aStarFrontier.add(new AStarEntry(neighbor, tentativeG, tentativeG + h));
                 }
