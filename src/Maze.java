@@ -16,6 +16,17 @@ import java.util.List;
  * <p>Example import format for {@link #importFromFile(String)} is:
  * row count, column count, {@code start: row,col}, {@code end: row,col},
  * then one layout row per maze row using {@code 1} (path) and {@code 0} (wall).
+ * Example:
+ * @code
+ * 4
+ * 5
+ * start: 3,0
+ * end: 0,4
+ * 11111
+ * 10001
+ * 10101
+ * 11111
+ * @endcode
  */
 public class Maze {
 
@@ -241,10 +252,12 @@ public class Maze {
 
     /**
      * Export the current maze to text format for import/export.
-        *
-        * @param filePath destination file path
-        * @throws IOException if writing fails
-        * @throws IllegalStateException if start or end is not set
+      *
+      * <p>The output follows the same schema accepted by {@link #importFromFile(String)}.
+      *
+      * @param filePath destination file path
+      * @throws IOException if writing fails
+      * @throws IllegalStateException if start or end is not set
      */
     public void exportToFile(String filePath) throws IOException {
         if (start == null) {
@@ -411,9 +424,7 @@ public class Maze {
 
 
     /**
-     * 
-     * Validation and debugging utilities:
-     * 
+     * Validation and debugging utilities.
      */
 
 
