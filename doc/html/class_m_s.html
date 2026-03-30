@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Maze-Solver: MS Class Reference</title>
+<title>My Project: MS Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,8 +26,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="TitleImage.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.1</span>
+   <div id="projectname">My Project<span id="projectnumber">&#160;V0.3</span>
    </div>
   </td>
  </tr>
@@ -109,17 +110,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a10dc989ca35b5a83c0555b59c4873d6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Demo application entry point for loading, visualizing, and step-solving a maze.</p>
-<p>This class wires: </p><ul>
-<li>
-<a class="el" href="class_maze.html">Maze</a> file import </li>
-<li>
-Optional debug output </li>
-<li>
-GUI rendering and controls </li>
-<li>
-Incremental solver stepping through a Swing timer </li>
-</ul>
+<div class="textblock"><p>Demo application entry point.</p>
+<p>Typical usage is to run this class directly from IDE or command line. It delegates all GUI and session flow to <code><a class="el" href="class_maze_renderer.html">MazeRenderer</a></code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a10dc989ca35b5a83c0555b59c4873d6b" name="a10dc989ca35b5a83c0555b59c4873d6b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a10dc989ca35b5a83c0555b59c4873d6b">&#9670;&#160;</a></span>main()</h2>
@@ -144,16 +136,7 @@ Incremental solver stepping through a Swing timer </li>
 </table>
 </div><div class="memdoc">
 <p>Starts the maze demo.</p>
-<p>Runtime behavior: </p><ol>
-<li>
-Loads maze from file </li>
-<li>
-Displays maze + control panel </li>
-<li>
-Runs selected solver algorithm one step per timer tick </li>
-<li>
-Restarts solver view/state when algorithm selection changes </li>
-</ol>
+<p>Delegates app flow to <a class="el" href="class_maze_renderer.html" title="Renderer and UI controller for the maze application.">MazeRenderer</a>: title screen, file selection, maze loading, and interactive solve UI.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">args</td><td>command line arguments (currently unused) </td></tr>

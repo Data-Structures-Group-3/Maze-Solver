@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Maze-Solver: MazeRenderer Class Reference</title>
+<title>My Project: MazeRenderer Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,8 +26,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="TitleImage.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.1</span>
+   <div id="projectname">My Project<span id="projectnumber">&#160;V0.3</span>
    </div>
   </td>
  </tr>
@@ -102,45 +103,35 @@ $(function(){initNavTree('class_maze_renderer.html',''); initResizable(true); })
   <div class="headertitle"><div class="title">MazeRenderer Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Renderer and UI controller for the maze application.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a1592d322e3ac06120054771733550ddd" id="r_a1592d322e3ac06120054771733550ddd"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1592d322e3ac06120054771733550ddd">showMaze</a> (<a class="el" href="class_maze.html">Maze</a> maze)</td></tr>
-<tr class="separator:a1592d322e3ac06120054771733550ddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ebdc053beb418f72143af3808414a17" id="r_a1ebdc053beb418f72143af3808414a17"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ebdc053beb418f72143af3808414a17">setControlActions</a> (Runnable startAction, Runnable pauseAction, Runnable restartAction)</td></tr>
-<tr class="separator:a1ebdc053beb418f72143af3808414a17"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63b1717d9cce491d033c5a318e787b35" id="r_a63b1717d9cce491d033c5a318e787b35"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63b1717d9cce491d033c5a318e787b35">configureControls</a> (String algorithm, int stepDelayMs)</td></tr>
-<tr class="separator:a63b1717d9cce491d033c5a318e787b35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00da23c410e94f56474d73e4d413a2f8" id="r_a00da23c410e94f56474d73e4d413a2f8"><td class="memItemLeft" align="right" valign="top">static String&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a00da23c410e94f56474d73e4d413a2f8">getSelectedAlgorithm</a> ()</td></tr>
-<tr class="separator:a00da23c410e94f56474d73e4d413a2f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8da4f3452d33308bc75db6897dade2fc" id="r_a8da4f3452d33308bc75db6897dade2fc"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8da4f3452d33308bc75db6897dade2fc">getSelectedStepDelayMs</a> ()</td></tr>
-<tr class="separator:a8da4f3452d33308bc75db6897dade2fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a0f0fa87801fcec6c295f8ca3e35605" id="r_a9a0f0fa87801fcec6c295f8ca3e35605"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a0f0fa87801fcec6c295f8ca3e35605">setTraversedCount</a> (int traversedCount)</td></tr>
-<tr class="separator:a9a0f0fa87801fcec6c295f8ca3e35605"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa515c1e5b5e477703c8ee46c656cdfa4" id="r_aa515c1e5b5e477703c8ee46c656cdfa4"><td class="memItemLeft" align="right" valign="top">static boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa515c1e5b5e477703c8ee46c656cdfa4">setCellColor</a> (int row, int col, Color color)</td></tr>
-<tr class="separator:aa515c1e5b5e477703c8ee46c656cdfa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adeaecb0366449bd2b08dea092125dce5" id="r_adeaecb0366449bd2b08dea092125dce5"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adeaecb0366449bd2b08dea092125dce5">setCellColors</a> (List&lt; Point &gt; cells, Color color)</td></tr>
-<tr class="separator:adeaecb0366449bd2b08dea092125dce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad30acf841e3890ff9303c4108816c105" id="r_ad30acf841e3890ff9303c4108816c105"><td class="memItemLeft" align="right" valign="top">static boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad30acf841e3890ff9303c4108816c105">resetCellColor</a> (int row, int col)</td></tr>
-<tr class="separator:ad30acf841e3890ff9303c4108816c105"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1043006a61950808f86e9e2491222461" id="r_a1043006a61950808f86e9e2491222461"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1043006a61950808f86e9e2491222461">resetAllCellColors</a> ()</td></tr>
-<tr class="separator:a1043006a61950808f86e9e2491222461"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7395a4a185478c93f106b480189c1ef9" id="r_a7395a4a185478c93f106b480189c1ef9"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7395a4a185478c93f106b480189c1ef9">launchFromTitleScreen</a> ()</td></tr>
+<tr class="memdesc:a7395a4a185478c93f106b480189c1ef9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the renderer-driven application flow from the title screen.  <br /></td></tr>
+<tr class="separator:a7395a4a185478c93f106b480189c1ef9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Renders a <code><a class="el" href="class_maze.html">Maze</a></code> into a Swing window and exposes UI controls for stepping solver execution.</p>
-<p>The renderer owns: </p><ul>
+<div class="textblock"><p>Renderer and UI controller for the maze application. </p>
+<p>This class owns the full Swing-driven UX flow: </p><ul>
 <li>
-Grid drawing (cells + walls) </li>
+Title screen presentation </li>
 <li>
-Control panel (Start, Pause, Restart) </li>
+<a class="el" href="class_maze.html">Maze</a> file selection and load error reporting </li>
 <li>
-Runtime controls (algorithm selector, step delay, traversed counter) </li>
+<a class="el" href="class_maze.html">Maze</a> grid rendering with wall-edge visualization </li>
 <li>
-Automatic restart trigger when algorithm selection changes </li>
+Runtime solver controls (start/pause/restart, delay, instant mode) </li>
+<li>
+Zoom handling (buttons and Ctrl+mouse wheel) </li>
 </ul>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a63b1717d9cce491d033c5a318e787b35" name="a63b1717d9cce491d033c5a318e787b35"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a63b1717d9cce491d033c5a318e787b35">&#9670;&#160;</a></span>configureControls()</h2>
+<p>Typical usage is through <code><a class="el" href="#a7395a4a185478c93f106b480189c1ef9">launchFromTitleScreen()</a></code> from the app entrypoint. Example: </p><div class="fragment"><div class="line">SwingUtilities.invokeLater(<a class="code hl_function" href="#a7395a4a185478c93f106b480189c1ef9">MazeRenderer::launchFromTitleScreen</a>);</div>
+<div class="ttc" id="aclass_maze_renderer_html_a7395a4a185478c93f106b480189c1ef9"><div class="ttname"><a href="#a7395a4a185478c93f106b480189c1ef9">MazeRenderer.launchFromTitleScreen</a></div><div class="ttdeci">static void launchFromTitleScreen()</div><div class="ttdoc">Starts the renderer-driven application flow from the title screen.</div><div class="ttdef"><b>Definition</b> MazeRenderer.java:126</div></div>
+</div><!-- fragment --> </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a7395a4a185478c93f106b480189c1ef9" name="a7395a4a185478c93f106b480189c1ef9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7395a4a185478c93f106b480189c1ef9">&#9670;&#160;</a></span>launchFromTitleScreen()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -149,45 +140,7 @@ Automatic restart trigger when algorithm selection changes </li>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void MazeRenderer.configureControls </td>
-          <td>(</td>
-          <td class="paramtype">String</td>          <td class="paramname"><span class="paramname"><em>algorithm</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>stepDelayMs</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Configures default control values.</p>
-<p>If controls are already visible, their values are updated immediately.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">algorithm</td><td>default algorithm label (DFS, BFS, or A*) </td></tr>
-    <tr><td class="paramname">stepDelayMs</td><td>default solver step delay in milliseconds </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a00da23c410e94f56474d73e4d413a2f8" name="a00da23c410e94f56474d73e4d413a2f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00da23c410e94f56474d73e4d413a2f8">&#9670;&#160;</a></span>getSelectedAlgorithm()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static String MazeRenderer.getSelectedAlgorithm </td>
+          <td class="memname">static void MazeRenderer.launchFromTitleScreen </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -199,305 +152,9 @@ Automatic restart trigger when algorithm selection changes </li>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Reads current algorithm selection from the GUI.</p>
-<dl class="section return"><dt>Returns</dt><dd>selected algorithm label (DFS, BFS, or A*) </dd></dl>
 
-</div>
-</div>
-<a id="a8da4f3452d33308bc75db6897dade2fc" name="a8da4f3452d33308bc75db6897dade2fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8da4f3452d33308bc75db6897dade2fc">&#9670;&#160;</a></span>getSelectedStepDelayMs()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int MazeRenderer.getSelectedStepDelayMs </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Reads current step-delay value from the GUI.</p>
-<dl class="section return"><dt>Returns</dt><dd>delay in milliseconds (minimum enforced at 10) </dd></dl>
-
-</div>
-</div>
-<a id="a1043006a61950808f86e9e2491222461" name="a1043006a61950808f86e9e2491222461"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1043006a61950808f86e9e2491222461">&#9670;&#160;</a></span>resetAllCellColors()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void MazeRenderer.resetAllCellColors </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Resets all rendered cells to default maze-driven appearance. </p>
-
-</div>
-</div>
-<a id="ad30acf841e3890ff9303c4108816c105" name="ad30acf841e3890ff9303c4108816c105"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad30acf841e3890ff9303c4108816c105">&#9670;&#160;</a></span>resetCellColor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static boolean MazeRenderer.resetCellColor </td>
-          <td>(</td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>col</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Resets one rendered cell to its default maze-driven appearance.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">row</td><td>row index of the cell to reset </td></tr>
-    <tr><td class="paramname">col</td><td>column index of the cell to reset </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if reset was accepted; false if renderer is not ready or coordinates are invalid </dd></dl>
-
-</div>
-</div>
-<a id="aa515c1e5b5e477703c8ee46c656cdfa4" name="aa515c1e5b5e477703c8ee46c656cdfa4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa515c1e5b5e477703c8ee46c656cdfa4">&#9670;&#160;</a></span>setCellColor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static boolean MazeRenderer.setCellColor </td>
-          <td>(</td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>col</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Color</td>          <td class="paramname"><span class="paramname"><em>color</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Updates one rendered cell color.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">row</td><td>row index of the target cell </td></tr>
-    <tr><td class="paramname">col</td><td>column index of the target cell </td></tr>
-    <tr><td class="paramname">color</td><td>new background color </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if update was accepted; false if renderer is not ready or coordinates are invalid </dd></dl>
-
-</div>
-</div>
-<a id="adeaecb0366449bd2b08dea092125dce5" name="adeaecb0366449bd2b08dea092125dce5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adeaecb0366449bd2b08dea092125dce5">&#9670;&#160;</a></span>setCellColors()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static int MazeRenderer.setCellColors </td>
-          <td>(</td>
-          <td class="paramtype">List&lt; Point &gt;</td>          <td class="paramname"><span class="paramname"><em>cells</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Color</td>          <td class="paramname"><span class="paramname"><em>color</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Updates multiple rendered cell colors.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">cells</td><td>points to recolor where <code class="JavaDocCode">x=col</code> and <code class="JavaDocCode">y=row</code> </td></tr>
-    <tr><td class="paramname">color</td><td>color to apply to each valid point </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>number of cells scheduled for update </dd></dl>
-
-</div>
-</div>
-<a id="a1ebdc053beb418f72143af3808414a17" name="a1ebdc053beb418f72143af3808414a17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ebdc053beb418f72143af3808414a17">&#9670;&#160;</a></span>setControlActions()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void MazeRenderer.setControlActions </td>
-          <td>(</td>
-          <td class="paramtype">Runnable</td>          <td class="paramname"><span class="paramname"><em>startAction</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Runnable</td>          <td class="paramname"><span class="paramname"><em>pauseAction</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Runnable</td>          <td class="paramname"><span class="paramname"><em>restartAction</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Registers callbacks used by the control buttons.</p>
-<p>The restart callback is also used when a user changes the algorithm selection in the runtime controls.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">startAction</td><td>callback executed when Start is pressed </td></tr>
-    <tr><td class="paramname">pauseAction</td><td>callback executed when Pause is pressed </td></tr>
-    <tr><td class="paramname">restartAction</td><td>callback executed when Restart is pressed </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a9a0f0fa87801fcec6c295f8ca3e35605" name="a9a0f0fa87801fcec6c295f8ca3e35605"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9a0f0fa87801fcec6c295f8ca3e35605">&#9670;&#160;</a></span>setTraversedCount()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void MazeRenderer.setTraversedCount </td>
-          <td>(</td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>traversedCount</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Updates the traversed tiles counter text in the GUI.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">traversedCount</td><td>number of traversed tiles to display </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a1592d322e3ac06120054771733550ddd" name="a1592d322e3ac06120054771733550ddd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1592d322e3ac06120054771733550ddd">&#9670;&#160;</a></span>showMaze()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void MazeRenderer.showMaze </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_maze.html">Maze</a></td>          <td class="paramname"><span class="paramname"><em>maze</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Displays the maze in a GUI window.</p>
-<p>Cell color mapping: </p><ul>
-<li>
-Start: green with <code class="JavaDocCode">S</code> </li>
-<li>
-Goal: blue with <code class="JavaDocCode">G</code> </li>
-<li>
-Blocked/unoccupied: dark gray </li>
-<li>
-Traversable: white </li>
-</ul>
-<p>Edge color mapping: </p><ul>
-<li>
-Black edge: wall or outer maze boundary </li>
-<li>
-Light edge: passable adjacency </li>
-</ul>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">maze</td><td>maze to render; expected to have dimensions initialized and path cells represented as non-null nodes </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Starts the renderer-driven application flow from the title screen. </p>
+<p>This is the recommended public entrypoint for GUI startup. </p>
 
 </div>
 </div>

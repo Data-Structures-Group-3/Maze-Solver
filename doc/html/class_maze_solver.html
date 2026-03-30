@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Maze-Solver: MazeSolver Class Reference</title>
+<title>My Project: MazeSolver Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,8 +26,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="TitleImage.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">Maze-Solver<span id="projectnumber">&#160;V0.1</span>
+   <div id="projectname">My Project<span id="projectnumber">&#160;V0.3</span>
    </div>
   </td>
  </tr>
@@ -125,14 +126,31 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a976101159c6108d2600323fbd913f5d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a930cd51699c61b24fa70f73072607ad5" id="r_a930cd51699c61b24fa70f73072607ad5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a930cd51699c61b24fa70f73072607ad5">getVisitedCount</a> ()</td></tr>
 <tr class="separator:a930cd51699c61b24fa70f73072607ad5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a188a2b6d5e8776a4b0715ab74990d71b" id="r_a188a2b6d5e8776a4b0715ab74990d71b"><td class="memItemLeft" align="right" valign="top">List&lt; Point &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a188a2b6d5e8776a4b0715ab74990d71b">getFinalPath</a> ()</td></tr>
+<tr class="separator:a188a2b6d5e8776a4b0715ab74990d71b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f7895d3d944960d5c68b7b5d4e33471" id="r_a5f7895d3d944960d5c68b7b5d4e33471"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f7895d3d944960d5c68b7b5d4e33471">resetSearch</a> ()</td></tr>
 <tr class="separator:a5f7895d3d944960d5c68b7b5d4e33471"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Incremental maze solver that supports DFS, BFS, and A*.</p>
 <p>The solver keeps internal state between calls to <code><a class="el" href="#a4731d9d114db6ed8934c1bb5b5153355">updateSolve()</a></code>, so callers can visualize or inspect each step one node at a time.</p>
-<p>Typical usage: create a solver, set algorithm and maze, then call <code><a class="el" href="#a4731d9d114db6ed8934c1bb5b5153355">updateSolve()</a></code> repeatedly until <code><a class="el" href="#a1e2cd30b080991b73b0d717e1862b74d">isFinished()</a></code> returns true. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+<p>Typical usage: create a solver, set algorithm and maze, then call <code><a class="el" href="#a4731d9d114db6ed8934c1bb5b5153355">updateSolve()</a></code> repeatedly until <code><a class="el" href="#a1e2cd30b080991b73b0d717e1862b74d">isFinished()</a></code> returns true. Example: </p><div class="fragment"><div class="line"><a class="code hl_class" href="class_maze_solver.html">MazeSolver</a> solver = <span class="keyword">new</span> <a class="code hl_class" href="class_maze_solver.html">MazeSolver</a>();</div>
+<div class="line">solver.<a class="code hl_function" href="#a19e7e09b1cf169d44927f2fbb1a4a9f9">setMaze</a>(maze);</div>
+<div class="line">solver.<a class="code hl_function" href="#a9baf570c82f61e83d1e11e8bb8a93e3c">setAlg</a>(<span class="stringliteral">&quot;A*&quot;</span>);</div>
+<div class="line"><span class="keywordflow">while</span> (!solver.<a class="code hl_function" href="#a1e2cd30b080991b73b0d717e1862b74d">isFinished</a>()) {</div>
+<div class="line">    solver.<a class="code hl_function" href="#a4731d9d114db6ed8934c1bb5b5153355">updateSolve</a>();</div>
+<div class="line">}</div>
+<div class="line"><span class="keywordflow">if</span> (solver.<a class="code hl_function" href="#a976101159c6108d2600323fbd913f5d7">isSolved</a>()) {</div>
+<div class="line">    List&lt;Point&gt; path = solver.<a class="code hl_function" href="#a188a2b6d5e8776a4b0715ab74990d71b">getFinalPath</a>();</div>
+<div class="line">}</div>
+<div class="ttc" id="aclass_maze_solver_html"><div class="ttname"><a href="class_maze_solver.html">MazeSolver</a></div><div class="ttdef"><b>Definition</b> MazeSolver.java:28</div></div>
+<div class="ttc" id="aclass_maze_solver_html_a188a2b6d5e8776a4b0715ab74990d71b"><div class="ttname"><a href="#a188a2b6d5e8776a4b0715ab74990d71b">MazeSolver.getFinalPath</a></div><div class="ttdeci">List&lt; Point &gt; getFinalPath()</div><div class="ttdef"><b>Definition</b> MazeSolver.java:166</div></div>
+<div class="ttc" id="aclass_maze_solver_html_a19e7e09b1cf169d44927f2fbb1a4a9f9"><div class="ttname"><a href="#a19e7e09b1cf169d44927f2fbb1a4a9f9">MazeSolver.setMaze</a></div><div class="ttdeci">void setMaze(Maze maze)</div><div class="ttdef"><b>Definition</b> MazeSolver.java:100</div></div>
+<div class="ttc" id="aclass_maze_solver_html_a1e2cd30b080991b73b0d717e1862b74d"><div class="ttname"><a href="#a1e2cd30b080991b73b0d717e1862b74d">MazeSolver.isFinished</a></div><div class="ttdeci">boolean isFinished()</div><div class="ttdef"><b>Definition</b> MazeSolver.java:135</div></div>
+<div class="ttc" id="aclass_maze_solver_html_a4731d9d114db6ed8934c1bb5b5153355"><div class="ttname"><a href="#a4731d9d114db6ed8934c1bb5b5153355">MazeSolver.updateSolve</a></div><div class="ttdeci">Maze.Node updateSolve()</div><div class="ttdef"><b>Definition</b> MazeSolver.java:111</div></div>
+<div class="ttc" id="aclass_maze_solver_html_a976101159c6108d2600323fbd913f5d7"><div class="ttname"><a href="#a976101159c6108d2600323fbd913f5d7">MazeSolver.isSolved</a></div><div class="ttdeci">boolean isSolved()</div><div class="ttdef"><b>Definition</b> MazeSolver.java:144</div></div>
+<div class="ttc" id="aclass_maze_solver_html_a9baf570c82f61e83d1e11e8bb8a93e3c"><div class="ttname"><a href="#a9baf570c82f61e83d1e11e8bb8a93e3c">MazeSolver.setAlg</a></div><div class="ttdeci">void setAlg(String alg)</div><div class="ttdef"><b>Definition</b> MazeSolver.java:64</div></div>
+</div><!-- fragment --> </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a4223613a3ef49712b3a81d02931e998c" name="a4223613a3ef49712b3a81d02931e998c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4223613a3ef49712b3a81d02931e998c">&#9670;&#160;</a></span>getAlg()</h2>
 
@@ -149,6 +167,26 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Gets the active algorithm label.</p>
 <dl class="section return"><dt>Returns</dt><dd>display label for the current algorithm </dd></dl>
+
+</div>
+</div>
+<a id="a188a2b6d5e8776a4b0715ab74990d71b" name="a188a2b6d5e8776a4b0715ab74990d71b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a188a2b6d5e8776a4b0715ab74990d71b">&#9670;&#160;</a></span>getFinalPath()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">List&lt; Point &gt; MazeSolver.getFinalPath </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Gets the final path after a successful solve.</p>
+<p>The path is traced backward using the internal parent table, so the returned list begins at the goal and ends at the start.</p>
+<dl class="section return"><dt>Returns</dt><dd>list of path points where <code class="JavaDocCode">x=col, y=row</code>; empty if unsolved </dd></dl>
 
 </div>
 </div>
