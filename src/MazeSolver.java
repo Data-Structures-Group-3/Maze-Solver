@@ -43,6 +43,7 @@ public class MazeSolver {
     private boolean finished;
     private boolean solved;
     private int visitedCount;
+    private long solveTimeNs;
     private Maze.Node[][] parent;
 
     // DFS/BFS state
@@ -115,16 +116,25 @@ public class MazeSolver {
 
         initializeIfNeeded();
 
+        long startTime = System.nanoTime();
+        Maze.Node result;
+
         switch (algorithm) {
             case DFS:
-                return dfsStep();
+                result = dfsStep();
+                break;
             case BFS:
-                return bfsStep();
+                result = bfsStep();
+                break;
             case A_STAR:
-                return aStarStep();
+                result = aStarStep();
+                break;
             default:
                 throw new IllegalStateException("Unsupported algorithm state: " + algorithm);
         }
+
+        solveTimeNs += System.nanoTime() - startTime;
+        return result;
     }
 
     /**
@@ -152,6 +162,15 @@ public class MazeSolver {
      */
     public int getVisitedCount() {
         return visitedCount;
+    }
+
+    /**
+     * Gets the total computation time elapsed in the current run.
+     *
+     * @return elapsed computation time in nanoseconds (algorithm execution only, excluding UI delays)
+     */
+    public long getSolveTimeNs() {
+        return solveTimeNs;
     }
 
     
@@ -197,6 +216,7 @@ public class MazeSolver {
         finished = false;
         solved = false;
         visitedCount = 0;
+        solveTimeNs = 0;
     }
 
     /**

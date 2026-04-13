@@ -95,6 +95,7 @@ public final class MazeRenderer {
     private static JComboBox<String> algorithmSelector;
     private static JSpinner delaySpinner;
     private static JLabel traversedCountLabel;
+    private static JLabel solveTimeLabel;
     private static JCheckBox instantSolveCheckBox;
 
     private static MazeSolver solver;
@@ -364,6 +365,7 @@ public final class MazeRenderer {
         buildMazeWindow(maze);
         applyControlDefaults(initialAlgorithm, initialStepDelayMs);
         resetTraversalCounter();
+        setSolveTimeNs(0);
 
         solver = new MazeSolver();
         solver.setMaze(maze);
@@ -392,6 +394,8 @@ public final class MazeRenderer {
             setTraversedCount(traversedTiles);
         }
 
+        setSolveTimeNs(solver.getSolveTimeNs());
+
         if (!solver.isFinished()) {
             return;
         }
@@ -403,12 +407,14 @@ public final class MazeRenderer {
             resetNodeColor(renderedMaze.getStart());
             resetNodeColor(renderedMaze.getGoal());
             System.out.println("Solve result: goal reached using " + solver.getAlg()
-                    + " after visiting " + solver.getVisitedCount() + " node(s).");
+                    + " after visiting " + solver.getVisitedCount() + " node(s) in "
+                    + String.format("%.4f", solver.getSolveTimeNs() / 1_000_000.0) + " ms.");
             return;
         }
 
         System.out.println("Solve result: no path found using " + solver.getAlg()
-                + " after visiting " + solver.getVisitedCount() + " node(s).");
+                + " after visiting " + solver.getVisitedCount() + " node(s) in "
+                + String.format("%.4f", solver.getSolveTimeNs() / 1_000_000.0) + " ms.");
     }
 
     /**
@@ -464,6 +470,7 @@ public final class MazeRenderer {
         solver.resetSearch();
         resetAllCellColors();
         resetTraversalCounter();
+        setSolveTimeNs(0);
         syncTimerDelayWithUi();
         sessionStarted = false;
         solvingInstantly = false;
@@ -504,16 +511,19 @@ public final class MazeRenderer {
                 solvingInstantly = false;
                 traversedTiles = setCellColors(traversedPoints, sessionVisitedColor);
                 setTraversedCount(traversedTiles);
+                setSolveTimeNs(solver.getSolveTimeNs());
 
                 if (solved && finalPath != null) {
                     setCellColors(finalPath, Color.CYAN);
                     resetNodeColor(renderedMaze.getStart());
                     resetNodeColor(renderedMaze.getGoal());
                     System.out.println("Solve result: goal reached using " + solver.getAlg()
-                            + " after visiting " + solver.getVisitedCount() + " node(s).");
+                            + " after visiting " + solver.getVisitedCount() + " node(s) in "
+                            + String.format("%.4f", solver.getSolveTimeNs() / 1_000_000.0) + " ms.");
                 } else {
                     System.out.println("Solve result: no path found using " + solver.getAlg()
-                            + " after visiting " + solver.getVisitedCount() + " node(s).");
+                            + " after visiting " + solver.getVisitedCount() + " node(s) in "
+                            + String.format("%.4f", solver.getSolveTimeNs() / 1_000_000.0) + " ms.");
                 }
 
                 refreshRuntimeControlState();
@@ -727,6 +737,7 @@ public final class MazeRenderer {
         delaySpinner = new JSpinner(new SpinnerNumberModel(defaultStepDelayMs, 1, 5000, 1));
         instantSolveCheckBox = new JCheckBox();
         traversedCountLabel = new JLabel("Traversed: " + defaultTraversedCount);
+        solveTimeLabel = new JLabel("Solve Time: 0.0000 ms");
 
         algorithmSelector.addActionListener(e -> {
             if (!applyingControlDefaults) {
@@ -768,6 +779,7 @@ public final class MazeRenderer {
         controlPanel.add(zoomOutButton);
         controlPanel.add(zoomInButton);
         controlPanel.add(traversedCountLabel);
+        controlPanel.add(solveTimeLabel);
 
         refreshRuntimeControlState();
 
@@ -1045,6 +1057,21 @@ public final class MazeRenderer {
 
         SwingUtilities.invokeLater(
                 () -> traversedCountLabel.setText("Traversed: " + defaultTraversedCount));
+    }
+
+    /**
+     * @brief Sets solve-time label text.
+     *
+     * @param solveTimeNs solve time in nanoseconds
+     */
+    private static void setSolveTimeNs(long solveTimeNs) {
+        if (solveTimeLabel == null) {
+            return;
+        }
+
+        double timeMs = solveTimeNs / 1_000_000.0;
+        SwingUtilities.invokeLater(
+                () -> solveTimeLabel.setText(String.format("Solve Time: %.4f ms", timeMs)));
     }
 
     /**
