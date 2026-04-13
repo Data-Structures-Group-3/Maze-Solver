@@ -17,9 +17,10 @@ It is designed for both interactive exploration and large-map performance testin
 9. Rendering and Performance
 10. Project Structure
 11. API and Extension Notes
-12. Troubleshooting
-13. Development Notes
-14. License
+12. Launch From Release JAR
+13. Troubleshooting
+14. Development Notes
+15. License
 
 ## Overview
 
@@ -43,6 +44,7 @@ Maze-Solver has four main responsibilities:
 - Gridline overlay for easier node-by-node visibility.
 - Start/goal color preservation after final path draw.
 - Debug diagnostics for maze import and neighbor consistency checks.
+- Default startup solve settings: A* algorithm and 200 ms step delay.
 
 ## Requirements
 
@@ -226,6 +228,32 @@ if (solver.isSolved()) {
 	 System.out.println("Path nodes: " + path.size());
 }
 ```
+
+## Launch From Release JAR
+
+If you downloaded a release artifact from GitHub (or received a provided prebuilt JAR), launch it as follows:
+
+1. Install Java 17+.
+2. Download the JAR and extract it first if it is packaged in a zip.
+3. Open a terminal in the folder containing the JAR.
+4. Run:
+
+```bash
+java -jar MazeSolver.jar
+```
+
+If your file has a different name, replace `MazeSolver.jar` with the actual filename.
+
+For builds distributed with external assets, keep this layout:
+
+```text
+release-folder/
+├─ MazeSolver.jar
+└─ images/
+   └─ TitleImage.jpg
+```
+
+If the app starts but the title image does not appear, ensure the `images` folder is present next to the JAR. The title screen images can be loaded from `images/TitleImage.jpg`. 
 
 ## Troubleshooting
 
