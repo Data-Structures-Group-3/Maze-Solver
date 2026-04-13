@@ -14,6 +14,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -1376,11 +1377,48 @@ public final class MazeRenderer {
         BackgroundImagePanel(String imagePath) {
             BufferedImage loaded = null;
             try {
-                loaded = ImageIO.read(new File(imagePath));
+                loaded = loadImageFromClasspath(imagePath);
+                if (loaded == null) {
+                    loaded = ImageIO.read(new File(imagePath));
+                }
+                if (loaded == null) {
+                    loaded = ImageIO.read(new File("src" + File.separator + imagePath));
+                }
             } catch (Exception ignored) {
                 loaded = null;
             }
             this.backgroundImage = loaded;
+        }
+
+        /**
+         * @brief Loads image bytes from classpath for JAR-compatible startup assets.
+         *
+         * @param imagePath relative image path (for example, images/TitleImage.jpg)
+         * @return decoded image, or null when no matching classpath resource exists
+         */
+        private static BufferedImage loadImageFromClasspath(String imagePath) {
+            String normalizedPath = imagePath.replace('\\', '/');
+            String[] candidates = {
+                    normalizedPath,
+                    "/" + normalizedPath,
+                    "src/" + normalizedPath,
+                    "/src/" + normalizedPath
+            };
+
+            for (String candidate : candidates) {
+                try (InputStream stream = MazeRenderer.class.getResourceAsStream(candidate)) {
+                    if (stream != null) {
+                        BufferedImage image = ImageIO.read(stream);
+                        if (image != null) {
+                            return image;
+                        }
+                    }
+                } catch (Exception ignored) {
+                    // Try next candidate resource path.
+                }
+            }
+
+            return null;
         }
 
         /**
